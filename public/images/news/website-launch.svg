@@ -18,7 +18,7 @@
     <circle cx="38" cy="18" r="6" fill="#ffbd2e"/>
     <circle cx="56" cy="18" r="6" fill="#27c93f"/>
     <rect x="80" y="8" width="320" height="20" rx="6" fill="#0c1933"/>
-    <text x="240" y="22" fill="#00d4ff" font-family="monospace" font-size="11" text-anchor="middle">https://nfu-emlab.netlify.app</text>
+    <text x="240" y="22" fill="#00d4ff" font-family="monospace" font-size="11" text-anchor="middle">https://liu030308.github.io/nfu-emlab</text>
     <rect x="40" y="60" width="160" height="20" rx="4" fill="url(#gCyan)"/>
     <rect x="40" y="90" width="240" height="10" rx="3" fill="#4a6fa5"/>
     <rect x="40" y="108" width="200" height="10" rx="3" fill="#334e68"/>

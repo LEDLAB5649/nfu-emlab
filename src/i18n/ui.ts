@@ -48,7 +48,7 @@ export function pageUrl(lang: Lang, page = ''): string {
 
 /** 產生包含正式網域的絕對網址（符合 Google hreflang 規範） */
 export function absolutePageUrl(siteUrl: URL | string | undefined, lang: Lang, page = ''): string {
-  const baseSite = (siteUrl ? (typeof siteUrl === 'string' ? siteUrl : siteUrl.origin) : 'https://nfu-emlab.netlify.app').replace(/\/$/, '');
+  const baseSite = (siteUrl ? (typeof siteUrl === 'string' ? siteUrl : siteUrl.origin) : 'https://liu030308.github.io').replace(/\/$/, '');
   const path = pageUrl(lang, page);
   return `${baseSite}${path}`;
 }

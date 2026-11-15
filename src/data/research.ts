@@ -443,7 +443,7 @@ export const research: ResearchArea[] = [
       { zh: '節能高均勻度 LED 路燈與投光燈', en: 'Energy-efficient uniform LED streetlights', ja: '省エネ高均一LED街路灯・投光器' },
       { zh: '全彩高對比顯示看板模組', en: 'Full-color high-contrast display signage', ja: 'フルカラー高コントラスト表示看板' },
     ],
-    image: '/images/equipment/integrating-sphere.webp',
+    image: '/images/equipment/integrating-sphere-large.webp',
   },
   {
     id: 'pv_green',

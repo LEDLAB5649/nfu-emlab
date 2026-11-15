@@ -3,9 +3,9 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // GitHub Pages 部署環境設定：
-// 正式網域：https://web.ledlab.us.kg
+// 正式網域：https://nfu.ledlab.us.kg
 // 自訂網域根路徑：/
-const SITE = process.env.SITE_URL || 'https://web.ledlab.us.kg';
+const SITE = process.env.SITE_URL || 'https://nfu.ledlab.us.kg';
 const BASE = process.env.BASE_PATH || '/';
 
 // https://astro.build/config

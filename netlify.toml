@@ -1,8 +1,8 @@
-# Netlify 部署設定檔（已全面轉移至 GitHub Pages）
-# 舊站訪客自動 301 永久轉址至 GitHub Pages 正式網址
-[[redirects]]
-  from = "/*"
-  to = "https://liu030308.github.io/nfu-emlab/:splat"
-  status = 301
-  force = true
+[build]
+  command = "npm run build"
+  publish = "dist"
 
+[build.environment]
+  NODE_VERSION = "24"
+  SITE_URL = "https://web.ledlab.us.kg"
+  BASE_PATH = "/"

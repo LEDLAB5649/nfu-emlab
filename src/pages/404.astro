@@ -5,20 +5,87 @@ import { pageUrl } from '../i18n/ui';
 
 <Base lang="zh" page="404" title="找不到頁面 (404)" is404={true}>
   <section class="section">
-    <div class="container not-found">
+    <div
+      class="container not-found"
+      id="nf-root"
+      data-en-home={pageUrl('en')}
+      data-en-members={pageUrl('en', 'members')}
+      data-en-achievements={pageUrl('en', 'achievements')}
+      data-ja-home={pageUrl('ja')}
+      data-ja-members={pageUrl('ja', 'members')}
+      data-ja-achievements={pageUrl('ja', 'achievements')}
+    >
       <span class="code">404</span>
-      <h1>找不到您要前往的頁面</h1>
-      <p class="lead">
+      <h1 id="nf-title">找不到您要前往的頁面</h1>
+      <p class="lead" id="nf-lead">
         您點擊的連結可能已變更或不存在。您可以返回電子量測實驗室首頁，或直接前往成員介紹與研究成果頁面。
       </p>
       <div class="actions">
-        <a class="btn btn-primary" href={pageUrl('zh')}>返回實驗室首頁</a>
-        <a class="btn btn-outline" href={pageUrl('zh', 'members')}>瀏覽實驗室成員</a>
-        <a class="btn btn-outline" href={pageUrl('zh', 'achievements')}>查看研究成果</a>
+        <a class="btn btn-primary" id="nf-home" href={pageUrl('zh')}>返回實驗室首頁</a>
+        <a class="btn btn-outline" id="nf-members" href={pageUrl('zh', 'members')}>瀏覽實驗室成員</a>
+        <a class="btn btn-outline" id="nf-achievements" href={pageUrl('zh', 'achievements')}>查看研究成果</a>
       </div>
     </div>
   </section>
 </Base>
+
+<script is:inline>
+  (() => {
+    const root = document.getElementById('nf-root');
+    if (!root) return;
+    const p = window.location.pathname;
+    const enHome = root.dataset.enHome || '/en/';
+    const jaHome = root.dataset.jaHome || '/ja/';
+    const isEn = p === enHome.replace(/\/$/, '') || p.startsWith(enHome);
+    const isJa = p === jaHome.replace(/\/$/, '') || p.startsWith(jaHome);
+    if (!isEn && !isJa) return;
+
+    const copy = isEn
+      ? {
+          htmlLang: 'en',
+          docTitle: 'Page Not Found (404)｜Electronic Measurement Lab LED_LAB',
+          title: 'Page Not Found',
+          lead: 'The page you are looking for may have been moved or does not exist. You can return to the lab homepage or browse our members and achievements.',
+          homeText: 'Back to Home',
+          membersText: 'Lab Members',
+          achievementsText: 'Achievements',
+          homeHref: enHome,
+          membersHref: root.dataset.enMembers,
+          achievementsHref: root.dataset.enAchievements,
+        }
+      : {
+          htmlLang: 'ja',
+          docTitle: 'ページが見つかりません (404)｜電子計測研究室 LED_LAB',
+          title: 'お探しのページが見つかりません',
+          lead: 'アクセスしたURLは変更されたか、存在しない可能性があります。研究室のトップページに戻るか、メンバー紹介・研究成果ページをご覧ください。',
+          homeText: 'トップページへ戻る',
+          membersText: 'メンバー紹介',
+          achievementsText: '研究成果を見る',
+          homeHref: jaHome,
+          membersHref: root.dataset.jaMembers,
+          achievementsHref: root.dataset.jaAchievements,
+        };
+
+    document.documentElement.lang = copy.htmlLang;
+    document.title = copy.docTitle;
+    const setText = (id, val) => {
+      const el = document.getElementById(id);
+      if (el && val) el.textContent = val;
+    };
+    const setLink = (id, text, href) => {
+      const el = document.getElementById(id);
+      if (el) {
+        if (text) el.textContent = text;
+        if (href) el.setAttribute('href', href);
+      }
+    };
+    setText('nf-title', copy.title);
+    setText('nf-lead', copy.lead);
+    setLink('nf-home', copy.homeText, copy.homeHref);
+    setLink('nf-members', copy.membersText, copy.membersHref);
+    setLink('nf-achievements', copy.achievementsText, copy.achievementsHref);
+  })();
+</script>
 
 <style>
   .not-found {

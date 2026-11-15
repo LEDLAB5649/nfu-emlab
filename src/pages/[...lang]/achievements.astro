@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { langPaths, nav, t, type Lang } from '../../i18n/ui';
+import { langPaths, nav, t, withBase, type Lang } from '../../i18n/ui';
 import { awards, medalLabel, patentGroups, patentType, publications } from '../../data/achievements';
 
 export const getStaticPaths = langPaths;
@@ -47,7 +47,7 @@ const medalIcon = { gold: '🥇', silver: '🥈', bronze: '🥉', award: '🏆' 
                 </div>
                 {a.image && (
                   <div class="award-thumb">
-                    <img src={a.image} alt={t(a.event, lang)} loading="lazy" />
+                    <img src={withBase(a.image)} alt={t(a.event, lang)} loading="lazy" />
                   </div>
                 )}
               </a>

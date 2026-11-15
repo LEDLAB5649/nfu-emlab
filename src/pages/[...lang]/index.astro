@@ -27,6 +27,8 @@ const L = {
     ja: '半導体材料、フリップチップ実装、スマートAIoTから光電子微細計測まで広がる6つの中核研究領域。',
   },
   joinTitle: { zh: '一起來做研究吧！', en: 'Join our lab!', ja: '一緒に研究しませんか？' },
+  pubsTitle: { zh: '代表性論文發表', en: 'Selected Publications', ja: '主要論文' },
+  allAchievements: { zh: '查看全部研究成果', en: 'View all achievements', ja: '研究成果をすべて見る' },
   joinText: {
     zh: '歡迎對半導體、LED、光電量測與感測系統有興趣的專題生與碩士生加入。',
     en: 'We welcome undergraduate and graduate students interested in semiconductors, LEDs, optoelectronic measurement and sensing.',
@@ -138,7 +140,7 @@ const L = {
         <a href={pageUrl(lang, 'news')}>{t(ui.allNews, lang)} →</a>
       </div>
       <div>
-        <h2 class="section-title">Publications</h2>
+        <h2 class="section-title">{t(L.pubsTitle, lang)}</h2>
         <ul class="news-list">
           {
             publications.slice(0, 3).map((p) => (
@@ -154,7 +156,7 @@ const L = {
             ))
           }
         </ul>
-        <a href={pageUrl(lang, 'achievements')}>{t(ui.allNews, lang)} →</a>
+        <a href={pageUrl(lang, 'achievements')}>{t(L.allAchievements, lang)} →</a>
       </div>
     </div>
   </section>

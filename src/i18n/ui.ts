@@ -108,6 +108,28 @@ export const ui = {
   },
   langMenuAria: { zh: '語言設定 / Language Selection', en: 'Language Selection', ja: '言語設定' },
   langMenuRole: { zh: '選擇語言', en: 'Select Language', ja: '言語を選択' },
+  langModeAuto: { zh: '自動', en: 'Auto', ja: '自動' },
+  langModeManual: { zh: '手動', en: 'Manual', ja: '手動' },
+  langAutoHint: {
+    zh: '自動偵測並套用瀏覽器／系統語言',
+    en: 'Auto-detect & apply browser/system language',
+    ja: 'ブラウザ／端末の言語を自動検出して適用',
+  },
+  langManualHint: {
+    zh: '手動選擇語言（支援萬國語言）',
+    en: 'Select language manually (World languages)',
+    ja: '手動で言語を選択（多言語対応）',
+  },
+  langSearchPh: {
+    zh: '搜尋萬國語言 (Search language)...',
+    en: 'Search world languages...',
+    ja: '言語を検索 (Search language)...',
+  },
+  langNoMatch: {
+    zh: '找不到符合的語言',
+    en: 'No matching language found',
+    ja: '一致する言語が見つかりません',
+  },
   imgProtected: {
     zh: '實驗室圖片受版權保護，暫不提供下載',
     en: 'Images are copyright protected and cannot be downloaded.',

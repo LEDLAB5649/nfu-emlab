@@ -174,72 +174,65 @@ const navUrlJa = is404 ? pageUrl('ja') : pageUrl('ja', page);
                 aria-label={t(ui.langMenuAria, lang)}
                 title={t(ui.langMenuAria, lang)}
               >
-                <svg class="lang-globe-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg class="lang-globe-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="2" y1="12" x2="22" y2="12"></line>
                   <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                 </svg>
-                <span class="lang-current-text">{lang === 'zh' ? '繁中' : lang === 'en' ? 'EN' : '日本語'}</span>
-                <svg class="lang-chevron-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
               </button>
 
-              <div class="lang-menu" id="lang-menu" role="menu" aria-label={t(ui.langMenuRole, lang)}>
-                <div class="lang-menu-info">
-                  <div class="lang-menu-info-title">
-                    <span class="pulse-indicator"></span>
-                    <span>{t(ui.langAutoTitle, lang)}</span>
-                  </div>
-                  <div class="lang-detected-display" id="lang-detected-text">{t(ui.langDetecting, lang)}</div>
+              <div class="lang-menu notranslate" id="lang-menu" role="menu" aria-label={t(ui.langMenuRole, lang)} translate="no">
+                <div class="lang-mode-tabs" role="tablist" aria-label={t(ui.langMenuRole, lang)}>
+                  <button type="button" class="lang-mode-tab active" id="lang-tab-auto" data-mode="auto" role="tab" aria-selected="true">
+                    <span aria-hidden="true">🌐</span>
+                    <span>{t(ui.langModeAuto, lang)}</span>
+                  </button>
+                  <button type="button" class="lang-mode-tab" id="lang-tab-manual" data-mode="manual" role="tab" aria-selected="false">
+                    <span aria-hidden="true">🌍</span>
+                    <span>{t(ui.langModeManual, lang)}</span>
+                  </button>
                 </div>
 
-                <div class="lang-menu-divider"></div>
-
-                <button type="button" class="lang-menu-item lang-switch-detected" id="lang-btn-switch-detected" role="menuitem">
-                  <div class="lang-item-content">
-                    <span class="lang-item-icon">⚡</span>
-                    <div class="lang-item-labels">
-                      <span class="lang-item-name">{t(ui.langSwitchToDetected, lang)}</span>
-                      <small class="lang-item-desc" id="lang-detected-action-desc">{t(ui.langAutoDesc, lang)}</small>
+                <div class="lang-panel" id="lang-panel-auto" role="tabpanel">
+                  <div class="lang-menu-info">
+                    <div class="lang-menu-info-title">
+                      <span class="pulse-indicator"></span>
+                      <span>{t(ui.langAutoTitle, lang)}</span>
                     </div>
+                    <div class="lang-detected-display" id="lang-detected-text">{t(ui.langDetecting, lang)}</div>
+                    <small class="lang-panel-hint">{t(ui.langAutoHint, lang)}</small>
                   </div>
-                </button>
 
-                <div class="lang-menu-divider"></div>
+                  <div class="lang-menu-divider"></div>
 
-                <a href={navUrlZh} class:list={['lang-menu-item', { active: lang === 'zh' }]} data-lang="zh" role="menuitem">
-                  <div class="lang-item-content">
-                    <span class="lang-item-icon">🇹🇼</span>
-                    <div class="lang-item-labels">
-                      <span class="lang-item-name">繁體中文</span>
-                      <small class="lang-item-desc">Traditional Chinese</small>
+                  <button type="button" class="lang-menu-item lang-switch-detected" id="lang-btn-switch-detected" role="menuitem">
+                    <div class="lang-item-content">
+                      <span class="lang-item-icon" aria-hidden="true">⚡</span>
+                      <div class="lang-item-labels">
+                        <span class="lang-item-name">{t(ui.langSwitchToDetected, lang)}</span>
+                        <small class="lang-item-desc" id="lang-detected-action-desc">{t(ui.langAutoDesc, lang)}</small>
+                      </div>
                     </div>
-                  </div>
-                  {lang === 'zh' && <span class="lang-item-check" aria-hidden="true">✓</span>}
-                </a>
+                  </button>
+                </div>
 
-                <a href={navUrlEn} class:list={['lang-menu-item', { active: lang === 'en' }]} data-lang="en" role="menuitem">
-                  <div class="lang-item-content">
-                    <span class="lang-item-icon">🇺🇸</span>
-                    <div class="lang-item-labels">
-                      <span class="lang-item-name">English</span>
-                      <small class="lang-item-desc">English</small>
-                    </div>
+                <div class="lang-panel" id="lang-panel-manual" role="tabpanel" hidden>
+                  <div class="lang-manual-header">{t(ui.langManualHint, lang)}</div>
+                  <div class="lang-search-wrap">
+                    <input
+                      type="search"
+                      id="lang-search-input"
+                      class="lang-search-input"
+                      placeholder={t(ui.langSearchPh, lang)}
+                      autocomplete="off"
+                      aria-label={t(ui.langSearchPh, lang)}
+                    />
                   </div>
-                  {lang === 'en' && <span class="lang-item-check" aria-hidden="true">✓</span>}
-                </a>
+                  <div class="lang-manual-list" id="lang-manual-list"></div>
+                  <div class="lang-no-match" id="lang-no-match" hidden>{t(ui.langNoMatch, lang)}</div>
+                </div>
 
-                <a href={navUrlJa} class:list={['lang-menu-item', { active: lang === 'ja' }]} data-lang="ja" role="menuitem">
-                  <div class="lang-item-content">
-                    <span class="lang-item-icon">🇯🇵</span>
-                    <div class="lang-item-labels">
-                      <span class="lang-item-name">日本語</span>
-                      <small class="lang-item-desc">Japanese</small>
-                    </div>
-                  </div>
-                  {lang === 'ja' && <span class="lang-item-check" aria-hidden="true">✓</span>}
-                </a>
+                <div id="google_translate_element" style="display:none" aria-hidden="true"></div>
               </div>
             </div>
             <button
@@ -445,13 +438,61 @@ const navUrlJa = is404 ? pageUrl('ja') : pageUrl('ja', page);
           });
         }
 
-        // 語言選單與本機語言智慧切換邏輯
+        // 語言選單（自動 / 手動模式 + 萬國語言支援）
         const dropdown = document.getElementById('lang-dropdown');
         const btn = document.getElementById('lang-btn');
         const menu = document.getElementById('lang-menu');
+        const tabAuto = document.getElementById('lang-tab-auto');
+        const tabManual = document.getElementById('lang-tab-manual');
+        const panelAuto = document.getElementById('lang-panel-auto');
+        const panelManual = document.getElementById('lang-panel-manual');
         const detectedText = document.getElementById('lang-detected-text');
         const switchDetectedBtn = document.getElementById('lang-btn-switch-detected');
         const detectedActionDesc = document.getElementById('lang-detected-action-desc');
+        const searchInput = document.getElementById('lang-search-input');
+        const manualListEl = document.getElementById('lang-manual-list');
+        const noMatchEl = document.getElementById('lang-no-match');
+
+        const MODE_KEY = 'nfu_lang_mode';
+        const CODE_KEY = 'nfu_lang_code';
+        const pageSourceLang = currentLang === 'zh' ? 'zh-TW' : currentLang;
+
+        const WORLD_LANGS = [
+          { code: 'zh-TW', nativeCode: 'zh', name: '繁體中文', enName: 'Traditional Chinese', flag: '🇹🇼', native: true, kw: '繁中 正體 台灣' },
+          { code: 'en', nativeCode: 'en', name: 'English', enName: 'English', flag: '🇺🇸', native: true, kw: '英文 英語 美國' },
+          { code: 'ja', nativeCode: 'ja', name: '日本語', enName: 'Japanese', flag: '🇯🇵', native: true, kw: '日文 日語 日本' },
+          { code: 'zh-CN', name: '简体中文', enName: 'Chinese Simplified', flag: '🇨🇳', kw: '簡體 簡中 中國' },
+          { code: 'ko', name: '한국어', enName: 'Korean', flag: '🇰🇷', kw: '韓文 韓語 韓國' },
+          { code: 'vi', name: 'Tiếng Việt', enName: 'Vietnamese', flag: '🇻🇳', kw: '越南文 越南語' },
+          { code: 'th', name: 'ภาษาไทย', enName: 'Thai', flag: '🇹🇭', kw: '泰文 泰語 泰國' },
+          { code: 'id', name: 'Bahasa Indonesia', enName: 'Indonesian', flag: '🇮🇩', kw: '印尼文 印尼語' },
+          { code: 'ms', name: 'Bahasa Melayu', enName: 'Malay', flag: '🇲🇾', kw: '馬來文 馬來語' },
+          { code: 'tl', name: 'Filipino', enName: 'Filipino / Tagalog', flag: '🇵🇭', kw: '菲律賓文 他加祿語' },
+          { code: 'es', name: 'Español', enName: 'Spanish', flag: '🇪🇸', kw: '西班牙文 西語' },
+          { code: 'fr', name: 'Français', enName: 'French', flag: '🇫🇷', kw: '法文 法語 法國' },
+          { code: 'de', name: 'Deutsch', enName: 'German', flag: '🇩🇪', kw: '德文 德語 德國' },
+          { code: 'it', name: 'Italiano', enName: 'Italian', flag: '🇮🇹', kw: '義大利文 義語' },
+          { code: 'pt', name: 'Português', enName: 'Portuguese', flag: '🇵🇹', kw: '葡萄牙文 葡語' },
+          { code: 'nl', name: 'Nederlands', enName: 'Dutch', flag: '🇳🇱', kw: '荷蘭文 荷蘭語' },
+          { code: 'pl', name: 'Polski', enName: 'Polish', flag: '🇵🇱', kw: '波蘭文 波蘭語' },
+          { code: 'ru', name: 'Русский', enName: 'Russian', flag: '🇷🇺', kw: '俄文 俄語 俄羅斯' },
+          { code: 'uk', name: 'Українська', enName: 'Ukrainian', flag: '🇺🇦', kw: '烏克蘭文 烏克蘭語' },
+          { code: 'cs', name: 'Čeština', enName: 'Czech', flag: '🇨🇿', kw: '捷克文 捷克語' },
+          { code: 'sv', name: 'Svenska', enName: 'Swedish', flag: '🇸🇪', kw: '瑞典文 瑞典語' },
+          { code: 'da', name: 'Dansk', enName: 'Danish', flag: '🇩🇰', kw: '丹麥文 丹麥語' },
+          { code: 'fi', name: 'Suomi', enName: 'Finnish', flag: '🇫🇮', kw: '芬蘭文 芬蘭語' },
+          { code: 'no', name: 'Norsk', enName: 'Norwegian', flag: '🇳🇴', kw: '挪威文 挪威語' },
+          { code: 'el', name: 'Ελληνικά', enName: 'Greek', flag: '🇬🇷', kw: '希臘文 希臘語' },
+          { code: 'hu', name: 'Magyar', enName: 'Hungarian', flag: '🇭🇺', kw: '匈牙利文 匈牙利語' },
+          { code: 'ro', name: 'Română', enName: 'Romanian', flag: '🇷🇴', kw: '羅馬尼亞文' },
+          { code: 'tr', name: 'Türkçe', enName: 'Turkish', flag: '🇹🇷', kw: '土耳其文 土耳其語' },
+          { code: 'ar', name: 'العربية', enName: 'Arabic', flag: '🇸🇦', kw: '阿拉伯文 阿語' },
+          { code: 'he', name: 'עברית', enName: 'Hebrew', flag: '🇮🇱', kw: '希伯來文' },
+          { code: 'fa', name: 'فارسی', enName: 'Persian', flag: '🇮🇷', kw: '波斯文' },
+          { code: 'hi', name: 'हिन्दी', enName: 'Hindi', flag: '🇮🇳', kw: '印地文 印度語' },
+          { code: 'bn', name: 'বাংলা', enName: 'Bengali', flag: '🇧🇩', kw: '孟加拉文' },
+          { code: 'ur', name: 'اردو', enName: 'Urdu', flag: '🇵🇰', kw: '烏爾都文' },
+        ];
 
         const closeDropdown = () => {
           if (!dropdown) return;
@@ -459,32 +500,126 @@ const navUrlJa = is404 ? pageUrl('ja') : pageUrl('ja', page);
           if (btn) btn.setAttribute('aria-expanded', 'false');
         };
 
-        if (dropdown && btn && menu) {
-          // 偵測訪客系統／瀏覽器偏好語言
-          const navLangs = navigator.languages ?? [navigator.language ?? 'zh'];
-          const detectedFull = navigator.language ?? 'zh-TW';
-          let detected = 'zh';
+        const getGoogTransTarget = () => {
+          const m = document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/);
+          if (!m) return '';
+          const parts = decodeURIComponent(m[1]).split('/');
+          return parts[2] || '';
+        };
 
+        const setGoogTransCookie = (targetCode) => {
+          document.cookie = `googtrans=/${pageSourceLang}/${targetCode}; path=/`;
+        };
+
+        const clearGoogTransCookie = () => {
+          const host = location.hostname;
+          const domains = ['', host, `.${host}`];
+          domains.forEach((d) => {
+            const dPart = d ? `; domain=${d}` : '';
+            document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${dPart}`;
+          });
+        };
+
+        const detectBrowserLang = () => {
+          const navLangs = navigator.languages?.length ? navigator.languages : [navigator.language || 'zh-TW'];
           for (const raw of navLangs) {
-            const l = (raw ?? '').toLowerCase();
-            if (l.startsWith('ja')) { detected = 'ja'; break; }
-            if (l.startsWith('en')) { detected = 'en'; break; }
-            if (l.startsWith('zh')) { detected = 'zh'; break; }
+            const lower = (raw || '').toLowerCase();
+            if (!lower) continue;
+            if (lower === 'zh-cn' || lower === 'zh-sg' || lower.startsWith('zh-hans')) {
+              return WORLD_LANGS.find((l) => l.code === 'zh-CN') || WORLD_LANGS[0];
+            }
+            if (lower === 'zh-tw' || lower === 'zh-hk' || lower === 'zh-mo' || lower.startsWith('zh-hant') || lower === 'zh') {
+              return WORLD_LANGS[0];
+            }
+            if (lower.startsWith('fil') || lower.startsWith('tl')) {
+              return WORLD_LANGS.find((l) => l.code === 'tl') || WORLD_LANGS[0];
+            }
+            if (lower.startsWith('iw') || lower.startsWith('he')) {
+              return WORLD_LANGS.find((l) => l.code === 'he') || WORLD_LANGS[0];
+            }
+            if (lower.startsWith('nb') || lower.startsWith('nn') || lower.startsWith('no')) {
+              return WORLD_LANGS.find((l) => l.code === 'no') || WORLD_LANGS[0];
+            }
+            const base = lower.split('-')[0];
+            const found = WORLD_LANGS.find((l) => l.code.toLowerCase() === lower || l.code.toLowerCase() === base);
+            if (found) return found;
           }
+          return WORLD_LANGS[0];
+        };
 
-          const langNameMap = {
-            zh: `繁體中文 (${detectedFull})`,
-            en: `English (${detectedFull})`,
-            ja: `日本語 (${detectedFull})`,
+        let pendingGtCode = '';
+        const triggerGtCombo = (targetCode) => {
+          pendingGtCode = targetCode;
+          let tries = 0;
+          const poll = setInterval(() => {
+            const combo = document.querySelector('#google_translate_element select.goog-te-combo');
+            if (combo && combo instanceof HTMLSelectElement && combo.options.length > 0) {
+              clearInterval(poll);
+              if (combo.value !== targetCode) {
+                combo.value = targetCode;
+                combo.dispatchEvent(new Event('change'));
+              }
+            } else if (++tries > 40) {
+              clearInterval(poll);
+            }
+          }, 120);
+        };
+
+        const ensureGoogleTranslate = (targetCode) => {
+          setGoogTransCookie(targetCode);
+          const existingCombo = document.querySelector('#google_translate_element select.goog-te-combo');
+          if (existingCombo && existingCombo instanceof HTMLSelectElement) {
+            existingCombo.value = targetCode;
+            existingCombo.dispatchEvent(new Event('change'));
+            return;
+          }
+          window.googleTranslateElementInit = () => {
+            if (window.google?.translate?.TranslateElement) {
+              new window.google.translate.TranslateElement(
+                { pageLanguage: pageSourceLang, autoDisplay: false },
+                'google_translate_element'
+              );
+              if (pendingGtCode) triggerGtCombo(pendingGtCode);
+            }
           };
+          pendingGtCode = targetCode;
+          if (!document.getElementById('gt-element-script')) {
+            const s = document.createElement('script');
+            s.id = 'gt-element-script';
+            s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+            s.async = true;
+            document.head.appendChild(s);
+          }
+          triggerGtCombo(targetCode);
+        };
+
+        if (dropdown && btn && menu) {
+          const detectedFull = navigator.language || 'zh-TW';
+          const detectedLang = detectBrowserLang();
+          const normPath = (s) => s.replace(/\/+$/, '') || '/';
+
+          let currentMode = 'auto';
+          let activeCode = pageSourceLang;
+          try {
+            if (localStorage.getItem(MODE_KEY) === 'manual') currentMode = 'manual';
+            const storedCode = localStorage.getItem(CODE_KEY);
+            if (currentMode === 'manual' && storedCode && WORLD_LANGS.some((l) => l.code === storedCode)) {
+              const storedObj = WORLD_LANGS.find((l) => l.code === storedCode);
+              activeCode = storedObj?.native ? pageSourceLang : storedCode;
+            }
+          } catch (_) {}
 
           if (detectedText) {
-            detectedText.textContent = langNameMap[detected] ?? detectedFull;
+            detectedText.textContent = `${detectedLang.flag} ${detectedLang.name} (${detectedFull})`;
           }
 
-          // 如果當前頁面與偵測到的瀏覽器語言相同，提示已是目前語言
-          if (detectedActionDesc) {
-            if (detected === currentLang) {
+          const syncDetectedDesc = () => {
+            if (!detectedActionDesc) return;
+            const isAlready =
+              (detectedLang.native && detectedLang.nativeCode === currentLang && !getGoogTransTarget()) ||
+              (!detectedLang.native && getGoogTransTarget() === detectedLang.code);
+
+            if (isAlready) {
               detectedActionDesc.textContent =
                 currentLang === 'zh'
                   ? '（已是目前頁面語言）'
@@ -498,11 +633,172 @@ const navUrlJa = is404 ? pageUrl('ja') : pageUrl('ja', page);
                   : currentLang === 'en'
                     ? 'Switch to '
                     : 'クリックして切り替え: ';
-              const targetName =
-                detected === 'zh' ? '繁體中文' : detected === 'en' ? 'English' : '日本語';
-              detectedActionDesc.textContent = `${prefix}${targetName}`;
+              detectedActionDesc.textContent = `${prefix}${detectedLang.name}`;
+            }
+          };
+
+          const renderManualList = (filterText = '') => {
+            if (!manualListEl) return;
+            const q = filterText.trim().toLowerCase();
+            const items = q
+              ? WORLD_LANGS.filter(
+                  (l) =>
+                    l.name.toLowerCase().includes(q) ||
+                    l.enName.toLowerCase().includes(q) ||
+                    l.code.toLowerCase().includes(q) ||
+                    (l.kw && l.kw.toLowerCase().includes(q))
+                )
+              : WORLD_LANGS;
+
+            manualListEl.innerHTML = '';
+            items.forEach((item) => {
+              const b = document.createElement('button');
+              b.type = 'button';
+              const isActive = item.code === activeCode;
+              b.className = isActive ? 'lang-menu-item active' : 'lang-menu-item';
+              b.setAttribute('role', 'menuitem');
+              b.dataset.langCode = item.code;
+
+              const content = document.createElement('div');
+              content.className = 'lang-item-content';
+
+              const icon = document.createElement('span');
+              icon.className = 'lang-item-icon';
+              icon.textContent = item.flag;
+
+              const labels = document.createElement('div');
+              labels.className = 'lang-item-labels';
+
+              const nameEl = document.createElement('span');
+              nameEl.className = 'lang-item-name';
+              nameEl.textContent = item.name;
+
+              const descEl = document.createElement('small');
+              descEl.className = 'lang-item-desc';
+              descEl.textContent = item.enName;
+
+              labels.appendChild(nameEl);
+              labels.appendChild(descEl);
+              content.appendChild(icon);
+              content.appendChild(labels);
+              b.appendChild(content);
+
+              if (isActive) {
+                const check = document.createElement('span');
+                check.className = 'lang-item-check';
+                check.setAttribute('aria-hidden', 'true');
+                check.textContent = '✓';
+                b.appendChild(check);
+              }
+
+              b.addEventListener('click', () => {
+                applyLanguage(item.code, 'manual');
+              });
+
+              manualListEl.appendChild(b);
+            });
+
+            if (noMatchEl) {
+              noMatchEl.hidden = items.length > 0;
+            }
+          };
+
+          const setModeUI = (mode) => {
+            currentMode = mode;
+            if (tabAuto) {
+              tabAuto.classList.toggle('active', mode === 'auto');
+              tabAuto.setAttribute('aria-selected', mode === 'auto' ? 'true' : 'false');
+            }
+            if (tabManual) {
+              tabManual.classList.toggle('active', mode === 'manual');
+              tabManual.setAttribute('aria-selected', mode === 'manual' ? 'true' : 'false');
+            }
+            if (panelAuto) panelAuto.hidden = mode !== 'auto';
+            if (panelManual) panelManual.hidden = mode !== 'manual';
+          };
+
+          const applyLanguage = (code, mode, useReplace = false) => {
+            const targetObj = WORLD_LANGS.find((l) => l.code === code) || WORLD_LANGS[0];
+            try {
+              localStorage.setItem(MODE_KEY, mode);
+              if (mode === 'manual') {
+                localStorage.setItem(CODE_KEY, targetObj.code);
+              } else {
+                localStorage.removeItem(CODE_KEY);
+              }
+            } catch (_) {}
+
+            if (targetObj.native) {
+              const hadGt = Boolean(
+                getGoogTransTarget() ||
+                  document.documentElement.classList.contains('translated-ltr') ||
+                  document.documentElement.classList.contains('translated-rtl')
+              );
+              clearGoogTransCookie();
+              const targetUrl =
+                targetObj.nativeCode === 'zh' ? urlZh : targetObj.nativeCode === 'en' ? urlEn : urlJa;
+              closeDropdown();
+              if (targetObj.nativeCode !== currentLang) {
+                if (useReplace) {
+                  window.location.replace(targetUrl);
+                } else {
+                  window.location.href = targetUrl;
+                }
+              } else if (hadGt) {
+                window.location.reload();
+              } else {
+                activeCode = targetObj.code;
+                renderManualList(searchInput instanceof HTMLInputElement ? searchInput.value : '');
+                syncDetectedDesc();
+              }
+            } else {
+              activeCode = targetObj.code;
+              renderManualList(searchInput instanceof HTMLInputElement ? searchInput.value : '');
+              syncDetectedDesc();
+              closeDropdown();
+              ensureGoogleTranslate(targetObj.code);
+            }
+          };
+
+          // 初始化顯示狀態與清單
+          setModeUI(currentMode);
+          renderManualList();
+          syncDetectedDesc();
+
+          // 跨頁或首次造訪自動套用邏輯
+          const gtCookie = getGoogTransTarget();
+          if (currentMode === 'manual') {
+            const manualObj = WORLD_LANGS.find((l) => l.code === activeCode);
+            if (manualObj && !manualObj.native) {
+              ensureGoogleTranslate(manualObj.code);
+            } else if (gtCookie) {
+              clearGoogTransCookie();
+            }
+          } else {
+            // 自動模式：若本會期尚未於首頁自動偵測切換，或已套用非原生語言 Cookie 則保持翻譯
+            const isRootEntry = normPath(window.location.pathname) === normPath(urlZh);
+            let autoApplied = false;
+            try {
+              autoApplied = sessionStorage.getItem('nfu_auto_lang_applied') === '1';
+            } catch (_) {}
+
+            if (!detectedLang.native && gtCookie === detectedLang.code) {
+              activeCode = detectedLang.code;
+              ensureGoogleTranslate(detectedLang.code);
+            } else if (isRootEntry && !autoApplied) {
+              try {
+                sessionStorage.setItem('nfu_auto_lang_applied', '1');
+              } catch (_) {}
+              if (detectedLang.code !== 'zh-TW') {
+                applyLanguage(detectedLang.code, 'auto', true);
+              }
             }
           }
+
+          // 防止點擊選單內部空白處關閉選單
+          menu.addEventListener('click', (e) => {
+            e.stopPropagation();
+          });
 
           // 切換選單開啟／關閉
           btn.addEventListener('click', (e) => {
@@ -511,6 +807,42 @@ const navUrlJa = is404 ? pageUrl('ja') : pageUrl('ja', page);
             btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
           });
 
+          // 點擊「自動」分頁：進入自動模式並立即套用瀏覽器語言
+          if (tabAuto) {
+            tabAuto.addEventListener('click', () => {
+              setModeUI('auto');
+              applyLanguage(detectedLang.code, 'auto');
+            });
+          }
+
+          // 點擊「手動」分頁：顯示萬國語言搜尋與清單
+          if (tabManual) {
+            tabManual.addEventListener('click', () => {
+              setModeUI('manual');
+              try {
+                localStorage.setItem(MODE_KEY, 'manual');
+              } catch (_) {}
+              renderManualList(searchInput instanceof HTMLInputElement ? searchInput.value : '');
+              if (searchInput instanceof HTMLInputElement && window.matchMedia?.('(pointer: fine)')?.matches) {
+                requestAnimationFrame(() => searchInput.focus());
+              }
+            });
+          }
+
+          // 搜尋萬國語言
+          if (searchInput instanceof HTMLInputElement) {
+            searchInput.addEventListener('input', () => {
+              renderManualList(searchInput.value);
+            });
+          }
+
+          // 點擊「使用瀏覽器語言切換」
+          if (switchDetectedBtn) {
+            switchDetectedBtn.addEventListener('click', () => {
+              applyLanguage(detectedLang.code, 'auto');
+            });
+          }
+
           // 點擊選單外部自動收合
           document.addEventListener('click', (e) => {
             const target = e.target;
@@ -518,17 +850,6 @@ const navUrlJa = is404 ? pageUrl('ja') : pageUrl('ja', page);
               closeDropdown();
             }
           });
-
-          // 點擊「使用瀏覽器偏好語言切換」
-          if (switchDetectedBtn) {
-            switchDetectedBtn.addEventListener('click', () => {
-              closeDropdown();
-              const urlMap = { zh: urlZh, en: urlEn, ja: urlJa };
-              if (urlMap[detected] && detected !== currentLang) {
-                window.location.href = urlMap[detected];
-              }
-            });
-          }
         }
 
         // ==========================================

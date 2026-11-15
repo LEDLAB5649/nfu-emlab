@@ -4,5 +4,5 @@
 
 [build.environment]
   NODE_VERSION = "24"
-  SITE_URL = "https://web.ledlab.us.kg"
+  SITE_URL = "https://led.ledlab.us.kg"
   BASE_PATH = "/"

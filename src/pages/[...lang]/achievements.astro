@@ -33,7 +33,7 @@ const medalIcon = { gold: '🥇', silver: '🥈', bronze: '🥉', award: '🏆' 
       <h2 class="section-title">{t(L.awards, lang)}</h2>
       <ol class="timeline">
         {
-          awards.map((a) => (
+          awards.map((a, idx) => (
             <li class={a.medal}>
               <span class="year">{a.year}</span>
               <a class="card award award-link" href={a.url} target="_blank" rel="noopener noreferrer">
@@ -47,7 +47,15 @@ const medalIcon = { gold: '🥇', silver: '🥈', bronze: '🥉', award: '🏆' 
                 </div>
                 {a.image && (
                   <div class="award-thumb">
-                    <img src={withBase(a.image)} alt={t(a.event, lang)} loading="lazy" />
+                    <img
+                      src={withBase(a.image)}
+                      alt={t(a.event, lang)}
+                      width="260"
+                      height="170"
+                      loading={idx < 6 ? 'eager' : 'lazy'}
+                      fetchpriority={idx < 3 ? 'high' : undefined}
+                      decoding="async"
+                    />
                   </div>
                 )}
               </a>

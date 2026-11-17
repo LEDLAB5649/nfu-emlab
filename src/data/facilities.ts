@@ -206,7 +206,7 @@ export const news: News[] = [
     },
     body: {
       zh: '歡迎劉峻瑋、洪梓瑜、許育人加入電子量測實驗室！',
-      en: 'Welcome Jun Wei Liu, Zi-Yu Hong, and Yu-Jen Hsu to the Electronic Measurement Lab!',
+      en: 'Welcome Jun Wei Liu, Zi-Yu Hong, and XU YU REN to the Electronic Measurement Lab!',
       ja: '劉峻瑋さん、洪梓瑜さん、許育人さん、電子計測研究室へようこそ！',
     },
     image: '/images/news/admissions-2026.webp',
@@ -235,7 +235,7 @@ export const news: News[] = [
     },
     body: {
       zh: '陳文瑞教授指導本實驗室陳昱琮、潘昱澤、許育人以「智慧型即時跌倒偵測系統之開發與應用」榮獲機械自動化及手工具創新組全國第三名！',
-      en: 'Advised by Prof. Wen-Ray Chen, lab members Yu-Cong Chen, Yu-Zan Pan, and Yu-Jen Hsu won 3rd Place with "Smart Real-Time Fall Detection System".',
+      en: 'Advised by Prof. Wen-Ray Chen, lab members Yu-Cong Chen, Yu-Zan Pan, and XU YU REN won 3rd Place with "Smart Real-Time Fall Detection System".',
       ja: '陳文瑞教授の指導のもと、当研究室の陳昱琮・潘昱澤・許育人が「スマートリアルタイム転倒検知システムの開発と応用」で第3位を受賞しました。',
     },
     image: '/images/news/innovation-2025.webp',

@@ -38,7 +38,7 @@ export const awards: Award[] = [
     },
     detail: {
       zh: '機械自動化及手工具創新組 第三名 — 智慧型即時跌倒偵測系統之開發與應用（陳昱琮、潘昱澤、許育人｜陳文瑞教授指導）',
-      en: '3rd Place (Mechanical Automation & Hand-Tool Innovation) — Smart Real-Time Fall Detection System (Y.-C. Chen, Y.-Z. Pan, Y.-J. Hsu)',
+      en: '3rd Place (Mechanical Automation & Hand-Tool Innovation) — Smart Real-Time Fall Detection System (Y.-C. Chen, Y.-Z. Pan, XU YU REN)',
       ja: '機械自動化・ハンドツール革新部門 第3位 — スマートリアルタイム転倒検知システムの開発と応用（陳昱琮、潘昱澤、許育人）',
     },
     medal: 'bronze',

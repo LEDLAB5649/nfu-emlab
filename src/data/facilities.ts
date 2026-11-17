@@ -184,16 +184,16 @@ export type News = { date: string; title: L; body?: L; image?: string; url?: str
 // 最新消息：新的放最上面
 export const news: News[] = [
   {
-    date: '2026-11-07',
+    date: '2026-11-15',
     title: {
-      zh: '實驗室全新官方網站正式上線',
-      en: 'New Official Lab Website Launched',
-      ja: '研究室公式ウェブサイト公開のお知らせ',
+      zh: '實驗室全新官方網站於 11/15 正式上線',
+      en: 'New Official Lab Website Officially Launched on 11/15',
+      ja: '研究室公式ウェブサイト 11/15 正式公開のお知らせ',
     },
     body: {
-      zh: '電子量測實驗室全新官方網站正式於 GitHub Pages 上線發布！全面支援繁體中文、English、日本語三語切換與深色模式，完整收錄實驗室六大研究領域、精密量測設備、歷年研究成果與成員介紹。',
-      en: 'The new official website of the Electronic Measurement Lab is now live on GitHub Pages! Featuring full Traditional Chinese, English, and Japanese multilingual support and dark mode, showcasing our research areas, facilities, achievements, and members.',
-      ja: '電子計測研究室の公式ウェブサイトを GitHub Pages にて公開しました。3言語（繁体字中国語・英語・日本語）およびダークモードに対応し、研究分野、計測設備、研究成果、メンバー紹介を掲載しています。',
+      zh: '電子量測實驗室全新官方網站自 2026-11-07 啟動規劃建置，並於 2026-11-15（11/15）正式於 GitHub Pages 上線發布！全面支援萬國語言切換與深色模式，完整收錄實驗室六大研究領域、精密量測設備、歷年研究成果與成員介紹。',
+      en: 'Following planning and development initiated on 2026-11-07, the new official website of the Electronic Measurement Lab officially launched on GitHub Pages on 2026-11-15 (11/15)! Featuring world language support and dark mode, showcasing our research areas, facilities, achievements, and members.',
+      ja: '2026-11-07より企画・構築を進めていた電子計測研究室の公式ウェブサイトが、2026-11-15（11/15）に GitHub Pages にて正式公開されました。多言語切替およびダークモードに対応し、研究分野、計測設備、研究成果、メンバー紹介を掲載しています。',
     },
     image: '/images/news/website-launch.webp',
   },

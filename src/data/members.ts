@@ -166,7 +166,7 @@ export const memberGroups: MemberGroup[] = [
       {
         id: 'liu-jun-wei',
         name: '劉峻瑋',
-        nameEn: 'Jun Wei Liu',
+        nameEn: 'Jun-Wei Liu',
         role: {
           zh: '實驗室總管・網站維護｜Network & AIoT Developer',
           en: 'Lab Manager · Webmaster | Network & AIoT Developer',

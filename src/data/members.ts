@@ -371,7 +371,7 @@ export const memberGroups: MemberGroup[] = [
       {
         id: 'hsu-yu-jen',
         name: '許育人',
-        nameEn: 'XU YU REN',
+        nameEn: 'Yu-Ren Xu',
         role: { zh: '碩士班一年級研究生', en: '1st-Year M.S. Student', ja: '修士課程1年' },
         topic: {
           zh: '智慧感測系統・姿態辨識與自動化電子量測',

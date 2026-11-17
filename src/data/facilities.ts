@@ -206,7 +206,7 @@ export const news: News[] = [
     },
     body: {
       zh: '歡迎劉峻瑋、洪梓瑜、許育人加入電子量測實驗室！',
-      en: 'Welcome Jun Wei Liu, Zi-Yu Hong, and Yu-Ren Xu to the Electronic Measurement Lab!',
+      en: 'Welcome Jun-Wei Liu, Zi-Yu Hong, and Yu-Ren Xu to the Electronic Measurement Lab!',
       ja: '劉峻瑋さん、洪梓瑜さん、許育人さん、電子計測研究室へようこそ！',
     },
     image: '/images/news/admissions-2026.webp',

@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Img from '../../components/Img.astro';
-import { langPaths, nav, t, type Lang } from '../../i18n/ui';
+import { langPaths, nav, pageUrl, t, ui, withBase, type CardModalPayload, type Lang } from '../../i18n/ui';
 import { research } from '../../data/research';
 
 export const getStaticPaths = langPaths;
@@ -15,6 +15,9 @@ const L = {
   },
   key: { zh: '關鍵技術', en: 'Key Technologies', ja: '主要技術' },
   app: { zh: '應用領域', en: 'Applications', ja: '応用分野' },
+  thesesTitle: { zh: '🎓 歷屆學長姐代表學位論文', en: '🎓 Representative Theses by Lab Alumni', ja: '🎓 先輩方の代表修士論文' },
+  viewMembers: { zh: '查看所有歷屆碩士生論文介紹', en: 'View All Alumni Theses on Members Page', ja: 'メンバーページで全修士論文を見る' },
+  viewEquip: { zh: '查看實驗室對應機台設備', en: 'View Related Lab Equipment', ja: '関連する実験設備を見る' },
 };
 ---
 
@@ -36,49 +39,123 @@ const L = {
   </section>
 
   {
-    research.map((r, i) => (
-      <section class:list={['section', { alt: i % 2 === 1 }]} id={r.id}>
-        <div class:list={['container', 'area', { flip: i % 2 === 1 }]}>
-          <div>
-            <span class="idx">0{i + 1}</span>
-            <h2 class="section-title">
-              {r.icon} {t(r.title, lang)}
-            </h2>
-            <p class="lead">{t(r.summary, lang)}</p>
-            <h3>{t(L.key, lang)}</h3>
-            <ul>
-              {r.points.map((p) => (
-                <li>{t(p, lang)}</li>
-              ))}
-            </ul>
-            {r.theses && r.theses.length > 0 && (
-              <div class="theses-box">
-                <h3>{t({ zh: '🎓 歷屆學長姐代表學位論文', en: '🎓 Representative Theses by Lab Alumni', ja: '🎓 先輩方の代表修士論文' }, lang)}</h3>
-                <ul class="theses-list">
-                  {r.theses.map((th) => (
-                    <li>
-                      <span class="th-title">📜 {t(th.title, lang)}</span>
-                      <span class="th-author"> — {t(th.student, lang)}{th.year ? ` (${th.year})` : ''}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <h3>{t(L.app, lang)}</h3>
+    research.map((r, i) => {
+      const areaModalData: CardModalPayload = {
+        icon: r.icon,
+        badge: `0${i + 1} · ${title}`,
+        title: t(r.title, lang),
+        image: withBase(r.image),
+        desc: t(r.summary, lang),
+        sections: [
+          { title: t(L.key, lang), list: r.points.map((p) => t(p, lang)) },
+          ...(r.theses?.length
+            ? [
+                {
+                  title: t(L.thesesTitle, lang),
+                  cards: r.theses.map((th) => ({
+                    title: t(th.title, lang),
+                    meta: `${t(th.student, lang)}${th.year ? ` (${th.year})` : ''}`,
+                  })),
+                },
+              ]
+            : []),
+          { title: t(L.app, lang), tags: r.applications.map((a) => t(a, lang)) },
+        ],
+        actions: [
+          { label: t(L.viewEquip, lang), url: pageUrl(lang, 'facilities'), primary: true },
+          { label: t(L.viewMembers, lang), url: pageUrl(lang, 'members') },
+        ],
+      };
+
+      const thesesModalData: CardModalPayload = {
+        icon: '🎓',
+        badge: t(r.title, lang),
+        title: t(L.thesesTitle, lang),
+        desc: t(r.summary, lang),
+        sections: [
+          {
+            title: t(L.thesesTitle, lang),
+            cards: (r.theses ?? []).map((th) => ({
+              title: t(th.title, lang),
+              meta: `${t(th.student, lang)}${th.year ? ` (${th.year})` : ''}`,
+            })),
+          },
+        ],
+        actions: [{ label: t(L.viewMembers, lang), url: pageUrl(lang, 'members'), primary: true }],
+      };
+
+      return (
+        <section class:list={['section', { alt: i % 2 === 1 }]} id={r.id}>
+          <div class:list={['container', 'area', { flip: i % 2 === 1 }]}>
             <div>
-              {r.applications.map((a) => (
-                <span class="tag">{t(a, lang)}</span>
-              ))}
+              <span class="idx">0{i + 1}</span>
+              <h2 class="section-title">
+                {r.icon} {t(r.title, lang)}
+              </h2>
+              <p class="lead">{t(r.summary, lang)}</p>
+              <h3>{t(L.key, lang)}</h3>
+              <ul>
+                {r.points.map((p) => (
+                  <li>{t(p, lang)}</li>
+                ))}
+              </ul>
+              {r.theses && r.theses.length > 0 && (
+                <div class="theses-box card" tabindex="0" role="button" data-card-modal={JSON.stringify(thesesModalData)}>
+                  <h3>{t(L.thesesTitle, lang)}</h3>
+                  <ul class="theses-list">
+                    {r.theses.map((th) => (
+                      <li>
+                        <span class="th-title">📜 {t(th.title, lang)}</span>
+                        <span class="th-author"> — {t(th.student, lang)}{th.year ? ` (${th.year})` : ''}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
+                </div>
+              )}
+              <h3>{t(L.app, lang)}</h3>
+              <div>
+                {r.applications.map((a) => (
+                  <span class="tag">{t(a, lang)}</span>
+                ))}
+              </div>
+            </div>
+            <div class="card research-media-card" tabindex="0" role="button" data-card-modal={JSON.stringify(areaModalData)}>
+              <Img src={r.image} alt={t(r.title, lang)} lang={lang} ratio="4/3" />
+              <div class="research-media-foot">
+                <span class="research-media-title">{r.icon} {t(r.title, lang)}</span>
+                <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
+              </div>
             </div>
           </div>
-          <Img src={r.image} alt={t(r.title, lang)} lang={lang} ratio="4/3" />
-        </div>
-      </section>
-    ))
+        </section>
+      );
+    })
   }
 </Base>
 
 <style>
+  .research-media-card {
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .research-media-foot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.15rem;
+  }
+  .research-media-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--heading);
+  }
+  .research-media-foot .card-click-hint {
+    margin-top: 0.25rem;
+  }
   .jump {
     display: flex;
     flex-wrap: wrap;

@@ -1324,6 +1324,326 @@ section[id] {
 }
 
 /* ========================================================
+   全站通用卡片點擊提示與詳細資訊彈窗 (Universal Card Modal)
+   ======================================================== */
+[data-card-modal] {
+  cursor: pointer;
+}
+
+.card-click-hint {
+  display: inline-block;
+  margin-top: 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--cyan-text);
+  transition: transform 0.2s ease;
+}
+
+[data-card-modal]:hover .card-click-hint {
+  transform: translateX(3px);
+}
+
+.u-card-modal {
+  margin: auto;
+  border: 1px solid var(--line-strong);
+  border-radius: calc(var(--radius) + 4px);
+  padding: 0;
+  max-width: min(720px, 92vw);
+  width: 100%;
+  max-height: 88vh;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  color: var(--text);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+:root[data-theme='dark'] .u-card-modal {
+  background: rgba(11, 20, 38, 0.94);
+  border-color: rgba(34, 211, 238, 0.35);
+}
+
+.u-card-modal::backdrop {
+  background: rgba(6, 15, 30, 0.68);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.u-modal-box {
+  padding: 2rem;
+  max-height: 88vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.u-modal-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.u-modal-box::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 14px 0;
+}
+
+.u-modal-box::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.32);
+  border-radius: 999px;
+}
+
+.u-modal-box::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan);
+}
+
+.u-modal-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--bg-alt);
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: 0.2s;
+}
+
+.u-modal-close:hover {
+  border-color: var(--cyan);
+  color: var(--cyan-text);
+}
+
+.u-modal-media {
+  margin-bottom: 1.25rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-alt);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.u-modal-media[hidden] {
+  display: none;
+}
+
+.u-modal-media img {
+  width: 100%;
+  max-height: 340px;
+  object-fit: contain;
+  display: block;
+}
+
+.u-modal-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.u-modal-icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: var(--cyan-soft);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  display: grid;
+  place-items: center;
+  font-size: 1.65rem;
+}
+
+.u-modal-icon[hidden] {
+  display: none;
+}
+
+.u-modal-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.u-modal-badge-row {
+  margin-bottom: 0.35rem;
+}
+
+.u-modal-badge-row:empty {
+  display: none;
+}
+
+.u-modal-heading h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  color: var(--heading);
+}
+
+.u-modal-subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--cyan-text);
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.u-modal-subtitle[hidden] {
+  display: none;
+}
+
+.u-modal-quote {
+  margin: 1rem 0 1.15rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--cyan);
+  background: var(--cyan-soft);
+  border-radius: 0 10px 10px 0;
+  font-style: italic;
+  color: var(--heading);
+}
+
+.u-modal-quote[hidden] {
+  display: none;
+}
+
+.u-modal-desc {
+  margin: 0.5rem 0 0;
+  color: var(--text);
+  line-height: 1.75;
+}
+
+.u-modal-desc[hidden] {
+  display: none;
+}
+
+.u-modal-section {
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+}
+
+.u-modal-section h3 {
+  font-size: 1.02rem;
+  margin: 0 0 0.65rem;
+  color: var(--cyan-text);
+}
+
+.u-modal-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.u-modal-list li {
+  margin-bottom: 0.4rem;
+  line-height: 1.6;
+}
+
+.u-modal-list li::marker {
+  color: var(--cyan);
+}
+
+.u-modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.u-modal-tags .tag {
+  margin: 0;
+}
+
+.u-modal-subcards {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.u-modal-subcard {
+  background: var(--bg-alt);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.u-modal-subcard-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.u-modal-subcard-head a {
+  color: var(--heading);
+  text-decoration: none;
+}
+
+.u-modal-subcard-head a:hover {
+  color: var(--cyan-text);
+  text-decoration: underline;
+}
+
+.u-modal-subcard p {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.u-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.u-action-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.52rem 1.05rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-alt);
+  color: var(--heading);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.u-action-pill:hover {
+  border-color: var(--cyan);
+  background: var(--cyan-soft);
+  color: var(--cyan-text);
+}
+
+.u-action-pill.primary {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.u-action-pill.primary:hover {
+  background: var(--cyan);
+  color: #061527;
+  border-color: var(--cyan);
+}
+
+@media (max-width: 600px) {
+  .u-modal-box {
+    padding: 1.35rem;
+  }
+  .u-modal-header {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* ========================================================
    尊重系統「減少動態效果」偏好（prefers-reduced-motion）
    ======================================================== */
 @media (prefers-reduced-motion: reduce) {

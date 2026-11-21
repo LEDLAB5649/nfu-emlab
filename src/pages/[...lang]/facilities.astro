@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Img from '../../components/Img.astro';
-import { langPaths, nav, t, type Lang } from '../../i18n/ui';
+import { langPaths, nav, pageUrl, t, ui, withBase, type CardModalPayload, type Lang } from '../../i18n/ui';
 import { electricShockSOP, equipment, safetyRules } from '../../data/facilities';
 
 export const getStaticPaths = langPaths;
@@ -12,6 +12,16 @@ const L = {
   equip: { zh: '儀器設備', en: 'Equipment', ja: '設備' },
   safety: { zh: '安全規範', en: 'Safety Rules', ja: '安全規則' },
   sop: { zh: '觸電急救 SOP', en: 'Electric Shock First Aid', ja: '感電時の応急処置' },
+  specs: { zh: '主要規格與機能', en: 'Specifications & Features', ja: '主な仕様・機能' },
+  apps: { zh: '研究與量測應用', en: 'Research & Measurement Applications', ja: '研究・計測応用' },
+  checklist: { zh: '安全操作細則', en: 'Safety Checklist', ja: '安全遵守事項' },
+  sopDesc: {
+    zh: '如實驗室內遇人員觸電事故，請冷靜並嚴格遵循以下標準急救四步驟，切勿徒手直接拉扯傷者以免連續感電：',
+    en: 'In case of electric shock in the lab, remain calm and follow these 4 emergency response steps immediately—never pull the victim with bare hands:',
+    ja: '実験室内で感電事故が発生した場合は、慌てず直ちに以下の4ステップを実施してください（二次感電を防ぐため素手で触れないこと）：',
+  },
+  sopStepsTitle: { zh: '標準緊急處置流程', en: 'Emergency Response Steps', ja: '緊急応急処置手順' },
+  contactLab: { zh: '聯絡實驗室／預約參觀量測', en: 'Contact Lab / Reserve Testing', ja: 'お問い合わせ・見学相談' },
 };
 ---
 
@@ -28,13 +38,31 @@ const L = {
       <h2 class="section-title">{t(L.equip, lang)}</h2>
       <div class="grid grid-3" style="margin-top:1.5rem">
         {
-          equipment.map((e) => (
-            <div class="card">
-              <Img src={e.image} alt={t(e.name, lang)} lang={lang} ratio="4/3" />
-              <h3>{t(e.name, lang)}</h3>
-              <p>{t(e.desc, lang)}</p>
-            </div>
-          ))
+          equipment.map((e) => {
+            const modalData: CardModalPayload = {
+              title: t(e.name, lang),
+              badge: t(L.equip, lang),
+              image: withBase(e.image),
+              desc: t(e.desc, lang),
+              sections: [
+                ...(e.specs?.length
+                  ? [{ title: t(L.specs, lang), list: e.specs.map((s) => t(s, lang)) }]
+                  : []),
+                ...(e.applications?.length
+                  ? [{ title: t(L.apps, lang), tags: e.applications.map((a) => t(a, lang)) }]
+                  : []),
+              ],
+              actions: [{ label: t(L.contactLab, lang), url: pageUrl(lang, 'contact'), primary: true }],
+            };
+            return (
+              <div class="card card-interactive" tabindex="0" role="button" data-card-modal={JSON.stringify(modalData)}>
+                <Img src={e.image} alt={t(e.name, lang)} lang={lang} ratio="4/3" />
+                <h3>{t(e.name, lang)}</h3>
+                <p>{t(e.desc, lang)}</p>
+                <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
+              </div>
+            );
+          })
         }
       </div>
     </div>
@@ -45,27 +73,64 @@ const L = {
       <h2 class="section-title">{t(L.safety, lang)}</h2>
       <div class="grid grid-3" style="margin-top:1.5rem">
         {
-          safetyRules.map((r) => (
-            <div class="card rule">
-              <span class="icon">{r.icon}</span>
-              <h3>{t(r.title, lang)}</h3>
-              <p>{t(r.desc, lang)}</p>
-            </div>
-          ))
+          safetyRules.map((r) => {
+            const modalData: CardModalPayload = {
+              icon: r.icon,
+              badge: t(L.safety, lang),
+              title: t(r.title, lang),
+              desc: t(r.desc, lang),
+              sections: r.details?.length
+                ? [{ title: t(L.checklist, lang), list: r.details.map((d) => t(d, lang)) }]
+                : [],
+            };
+            return (
+              <div class="card rule card-interactive" tabindex="0" role="button" data-card-modal={JSON.stringify(modalData)}>
+                <span class="icon">{r.icon}</span>
+                <h3>{t(r.title, lang)}</h3>
+                <p>{t(r.desc, lang)}</p>
+                <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
+              </div>
+            );
+          })
         }
       </div>
 
-      <div class="card sop">
+      <div
+        class="card sop card-interactive"
+        tabindex="0"
+        role="button"
+        data-card-modal={JSON.stringify({
+          icon: '🆘',
+          badge: t(L.safety, lang),
+          title: t(L.sop, lang),
+          desc: t(L.sopDesc, lang),
+          sections: [
+            {
+              title: t(L.sopStepsTitle, lang),
+              list: electricShockSOP.map((s) => t(s, lang)),
+            },
+          ],
+        } satisfies CardModalPayload)}
+      >
         <h3>🆘 {t(L.sop, lang)}</h3>
         <ol>
           {electricShockSOP.map((s) => <li>{t(s, lang)}</li>)}
         </ol>
+        <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
+  .card-interactive {
+    display: flex;
+    flex-direction: column;
+  }
+  .card-interactive .card-click-hint {
+    margin-top: auto;
+    padding-top: 0.75rem;
+  }
   .rule .icon {
     font-size: 2rem;
   }

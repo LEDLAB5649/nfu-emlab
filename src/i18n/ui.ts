@@ -14,6 +14,34 @@ export const langList = Object.keys(languages) as Lang[];
 /** 多語系文字。en / ja 沒填時會自動退回中文。 */
 export type L = { zh: string; en?: string; ja?: string };
 
+/** 全站卡片詳細彈窗資料結構 */
+export type CardModalSection = {
+  title: string;
+  list?: string[];
+  tags?: string[];
+  cards?: { title: string; meta?: string; desc?: string; badge?: string; url?: string }[];
+};
+
+export type CardModalAction = {
+  label: string;
+  url: string;
+  primary?: boolean;
+  external?: boolean;
+  contactEmail?: boolean;
+};
+
+export type CardModalPayload = {
+  title: string;
+  subtitle?: string;
+  badge?: string;
+  icon?: string;
+  image?: string;
+  desc?: string;
+  quote?: string;
+  sections?: CardModalSection[];
+  actions?: CardModalAction[];
+};
+
 /** 取出對應語言的文字 */
 export function t(text: L | string | undefined, lang: Lang): string {
   if (text === undefined) return '';
@@ -82,6 +110,9 @@ export const ui = {
   themeToggle: { zh: '切換深色／淺色模式', en: 'Toggle dark/light mode', ja: 'ダーク／ライトモード切替' },
   viewProfile: { zh: '點擊查看詳細介紹', en: 'Click for details', ja: '詳細プロフィールを見る' },
   closeModal: { zh: '關閉', en: 'Close', ja: '閉じる' },
+  viewDetails: { zh: '點擊查看詳細資訊', en: 'Click for details', ja: '詳細を見る' },
+  openExternalLink: { zh: '前往相關網頁／官方公告', en: 'Open Official Page / Link', ja: '公式ページ・関連リンクを開く' },
+  goToSection: { zh: '前往完整專頁查看', en: 'View Full Page', ja: '詳細ページへ移動' },
   navMenu: { zh: '導覽選單', en: 'Navigation Menu', ja: 'ナビゲーションメニュー' },
   langAutoTitle: { zh: '本機語言自動偵測', en: 'Device Language Detection', ja: 'デバイス言語の自動検出' },
   langDetecting: { zh: '偵測中…', en: 'Detecting…', ja: '検出中…' },

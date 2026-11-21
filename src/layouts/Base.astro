@@ -366,6 +366,30 @@ const navUrlJa = is404 ? pageUrl('ja') : pageUrl('ja', page);
       </div>
     </dialog>
 
+    <!-- 全站通用卡片詳細資訊彈窗 (Universal Card Detail Modal) -->
+    <dialog id="u-card-modal" class="u-card-modal" aria-labelledby="u-modal-title">
+      <div class="u-modal-box">
+        <button type="button" class="u-modal-close" id="u-modal-close" aria-label={t(ui.closeModal, lang)}>✕</button>
+        <div class="u-modal-media" id="u-modal-media" hidden>
+          <img id="u-modal-img" src="" alt="" decoding="async" />
+        </div>
+        <div class="u-modal-header">
+          <div class="u-modal-icon" id="u-modal-icon" hidden aria-hidden="true"></div>
+          <div class="u-modal-heading">
+            <div class="u-modal-badge-row" id="u-modal-badge-row"></div>
+            <h2 id="u-modal-title"></h2>
+            <p class="u-modal-subtitle" id="u-modal-subtitle" hidden></p>
+          </div>
+        </div>
+        <blockquote class="u-modal-quote" id="u-modal-quote" hidden></blockquote>
+        <p class="u-modal-desc" id="u-modal-desc" hidden></p>
+        <div id="u-modal-sections"></div>
+        <div id="u-modal-actions-wrap" class="u-modal-section" hidden>
+          <div class="u-modal-actions" id="u-modal-actions"></div>
+        </div>
+      </div>
+    </dialog>
+
     <!-- 全域懸浮 Toast 提示 -->
     <div id="contact-toast" class="contact-toast" role="status" aria-live="polite">
       <span>📋</span>
@@ -855,8 +879,296 @@ const navUrlJa = is404 ? pageUrl('ja') : pageUrl('ja', page);
         // ==========================================
         // === 全域無障礙鍵盤 Esc 關閉優先層級 ===
         // ==========================================
+        const uModal = document.getElementById('u-card-modal');
+        const uCloseBtn = document.getElementById('u-modal-close');
+        const uMedia = document.getElementById('u-modal-media');
+        const uImg = document.getElementById('u-modal-img');
+        const uIcon = document.getElementById('u-modal-icon');
+        const uBadgeRow = document.getElementById('u-modal-badge-row');
+        const uTitle = document.getElementById('u-modal-title');
+        const uSubtitle = document.getElementById('u-modal-subtitle');
+        const uQuote = document.getElementById('u-modal-quote');
+        const uDesc = document.getElementById('u-modal-desc');
+        const uSections = document.getElementById('u-modal-sections');
+        const uActionsWrap = document.getElementById('u-modal-actions-wrap');
+        const uActions = document.getElementById('u-modal-actions');
+        let lastCardTrigger = null;
+
+        const closeCardModal = () => {
+          if (uModal instanceof HTMLDialogElement && uModal.open) {
+            uModal.close();
+          }
+          document.body.style.overflow = '';
+          if (lastCardTrigger instanceof HTMLElement) {
+            lastCardTrigger.focus();
+            lastCardTrigger = null;
+          }
+        };
+
+        const openCardModal = (data, trigger) => {
+          if (!(uModal instanceof HTMLDialogElement) || typeof uModal.showModal !== 'function') return;
+          lastCardTrigger = trigger instanceof HTMLElement ? trigger : null;
+
+          if (uMedia && uImg instanceof HTMLImageElement) {
+            if (data.image) {
+              uImg.src = data.image;
+              uImg.alt = data.title || '';
+              uMedia.hidden = false;
+            } else {
+              uImg.src = '';
+              uImg.alt = '';
+              uMedia.hidden = true;
+            }
+          }
+
+          if (uIcon) {
+            if (data.icon) {
+              uIcon.textContent = data.icon;
+              uIcon.hidden = false;
+            } else {
+              uIcon.textContent = '';
+              uIcon.hidden = true;
+            }
+          }
+
+          if (uBadgeRow) {
+            uBadgeRow.innerHTML = '';
+            if (data.badge) {
+              const span = document.createElement('span');
+              span.className = 'tag';
+              span.textContent = data.badge;
+              uBadgeRow.appendChild(span);
+            }
+          }
+
+          if (uTitle) uTitle.textContent = data.title || '';
+
+          if (uSubtitle) {
+            if (data.subtitle) {
+              uSubtitle.textContent = data.subtitle;
+              uSubtitle.hidden = false;
+            } else {
+              uSubtitle.textContent = '';
+              uSubtitle.hidden = true;
+            }
+          }
+
+          if (uQuote) {
+            if (data.quote) {
+              uQuote.textContent = data.quote;
+              uQuote.hidden = false;
+            } else {
+              uQuote.textContent = '';
+              uQuote.hidden = true;
+            }
+          }
+
+          if (uDesc) {
+            if (data.desc) {
+              uDesc.textContent = data.desc;
+              uDesc.hidden = false;
+            } else {
+              uDesc.textContent = '';
+              uDesc.hidden = true;
+            }
+          }
+
+          if (uSections) {
+            uSections.innerHTML = '';
+            const secs = Array.isArray(data.sections) ? data.sections : [];
+            secs.forEach((sec) => {
+              const wrap = document.createElement('div');
+              wrap.className = 'u-modal-section';
+
+              if (sec.title) {
+                const h3 = document.createElement('h3');
+                h3.textContent = sec.title;
+                wrap.appendChild(h3);
+              }
+
+              if (Array.isArray(sec.list) && sec.list.length > 0) {
+                const ul = document.createElement('ul');
+                ul.className = 'u-modal-list';
+                sec.list.forEach((item) => {
+                  const li = document.createElement('li');
+                  li.textContent = item;
+                  ul.appendChild(li);
+                });
+                wrap.appendChild(ul);
+              }
+
+              if (Array.isArray(sec.tags) && sec.tags.length > 0) {
+                const tagsBox = document.createElement('div');
+                tagsBox.className = 'u-modal-tags';
+                sec.tags.forEach((tg) => {
+                  const s = document.createElement('span');
+                  s.className = 'tag';
+                  s.textContent = tg;
+                  tagsBox.appendChild(s);
+                });
+                wrap.appendChild(tagsBox);
+              }
+
+              if (Array.isArray(sec.cards) && sec.cards.length > 0) {
+                const grid = document.createElement('div');
+                grid.className = 'u-modal-subcards';
+                sec.cards.forEach((c) => {
+                  const card = document.createElement('div');
+                  card.className = 'u-modal-subcard';
+
+                  const head = document.createElement('div');
+                  head.className = 'u-modal-subcard-head';
+                  const strong = document.createElement('strong');
+                  if (c.url) {
+                    const a = document.createElement('a');
+                    a.href = c.url;
+                    if (c.url.startsWith('http')) {
+                      a.target = '_blank';
+                      a.rel = 'noopener noreferrer';
+                    }
+                    a.textContent = `${c.title} ↗`;
+                    strong.appendChild(a);
+                  } else {
+                    strong.textContent = c.title;
+                  }
+                  head.appendChild(strong);
+
+                  if (c.badge) {
+                    const b = document.createElement('span');
+                    b.className = 'tag';
+                    b.textContent = c.badge;
+                    head.appendChild(b);
+                  }
+                  card.appendChild(head);
+
+                  if (c.meta) {
+                    const metaP = document.createElement('p');
+                    metaP.textContent = c.meta;
+                    card.appendChild(metaP);
+                  }
+                  if (c.desc) {
+                    const descP = document.createElement('p');
+                    descP.textContent = c.desc;
+                    card.appendChild(descP);
+                  }
+                  grid.appendChild(card);
+                });
+                wrap.appendChild(grid);
+              }
+
+              uSections.appendChild(wrap);
+            });
+          }
+
+          if (uActionsWrap && uActions) {
+            uActions.innerHTML = '';
+            const acts = Array.isArray(data.actions) ? data.actions : [];
+            if (acts.length > 0) {
+              acts.forEach((act) => {
+                if (act.contactEmail) {
+                  const b = document.createElement('button');
+                  b.type = 'button';
+                  b.className = act.primary ? 'u-action-pill primary' : 'u-action-pill';
+                  b.textContent = act.label;
+                  b.addEventListener('click', () => {
+                    closeCardModal();
+                    const triggerEl = document.querySelector('[data-contact-email-trigger]');
+                    if (triggerEl instanceof HTMLElement && window.matchMedia?.('(pointer: fine)')?.matches && !window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) {
+                      triggerEl.click();
+                    } else {
+                      const emailDlg = document.getElementById('contact-email-modal');
+                      if (emailDlg instanceof HTMLDialogElement && typeof emailDlg.showModal === 'function') {
+                        emailDlg.showModal();
+                      }
+                    }
+                  });
+                  uActions.appendChild(b);
+                } else {
+                  const a = document.createElement('a');
+                  a.className = act.primary ? 'u-action-pill primary' : 'u-action-pill';
+                  a.href = act.url;
+                  if (act.external || (act.url && act.url.startsWith('http'))) {
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    a.textContent = `${act.label} ↗`;
+                  } else {
+                    a.textContent = `${act.label} →`;
+                    a.addEventListener('click', () => {
+                      uModal.close();
+                      document.body.style.overflow = '';
+                    });
+                  }
+                  uActions.appendChild(a);
+                }
+              });
+              uActionsWrap.hidden = false;
+            } else {
+              uActionsWrap.hidden = true;
+            }
+          }
+
+          const box = uModal.querySelector('.u-modal-box');
+          if (box) box.scrollTop = 0;
+          uModal.showModal();
+          document.body.style.overflow = 'hidden';
+        };
+
+        const defaultOpenLabel =
+          currentLang === 'zh'
+            ? '前往相關網頁／官方公告'
+            : currentLang === 'en'
+              ? 'Open Official Page / Link'
+              : '公式ページ・関連リンクを開く';
+
+        document.addEventListener('click', (e) => {
+          const target = e.target;
+          if (!(target instanceof Element)) return;
+          const trigger = target.closest('[data-card-modal]');
+          if (!trigger) return;
+          const innerSkip = target.closest('a[data-no-modal], button[data-no-modal], iframe, input, select, [data-contact-email-trigger]');
+          if (innerSkip && trigger.contains(innerSkip) && innerSkip !== trigger) return;
+          const innerLink = target.closest('a');
+          if (innerLink && trigger.contains(innerLink) && innerLink !== trigger) return;
+
+          const raw = trigger.getAttribute('data-card-modal');
+          if (!raw) return;
+          if (trigger.tagName === 'A') e.preventDefault();
+          try {
+            const data = JSON.parse(raw);
+            if ((!Array.isArray(data.actions) || data.actions.length === 0) && trigger.tagName === 'A') {
+              const href = trigger.getAttribute('href');
+              if (href) {
+                data.actions = [{ label: defaultOpenLabel, url: href, primary: true, external: href.startsWith('http') }];
+              }
+            }
+            openCardModal(data, trigger);
+          } catch (_) {}
+        });
+
+        if (uCloseBtn) {
+          uCloseBtn.addEventListener('click', closeCardModal);
+        }
+        if (uModal instanceof HTMLDialogElement) {
+          uModal.addEventListener('click', (e) => {
+            if (e.target === uModal) closeCardModal();
+          });
+          uModal.addEventListener('close', () => {
+            document.body.style.overflow = '';
+            if (lastCardTrigger instanceof HTMLElement) {
+              lastCardTrigger.focus();
+              lastCardTrigger = null;
+            }
+          });
+        }
+
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape') {
+            if (uModal instanceof HTMLDialogElement && uModal.open) {
+              e.preventDefault();
+              e.stopPropagation();
+              closeCardModal();
+              return;
+            }
             // 優先關閉語言選單並回復語言按鈕焦點
             if (dropdown?.classList.contains('open')) {
               e.preventDefault();
@@ -870,6 +1182,14 @@ const navUrlJa = is404 ? pageUrl('ja') : pageUrl('ja', page);
               e.preventDefault();
               closeNav();
               navBtn?.focus();
+              return;
+            }
+          }
+          if ((e.key === 'Enter' || e.key === ' ') && e.target instanceof Element) {
+            const trigger = e.target.closest('[data-card-modal]');
+            if (trigger && trigger === e.target && trigger.tagName !== 'A' && trigger.tagName !== 'BUTTON') {
+              e.preventDefault();
+              if (trigger instanceof HTMLElement) trigger.click();
             }
           }
         });

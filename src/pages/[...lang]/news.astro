@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Img from '../../components/Img.astro';
-import { langPaths, nav, t, type Lang } from '../../i18n/ui';
+import { langPaths, nav, t, ui, withBase, type CardModalPayload, type Lang } from '../../i18n/ui';
 import { news } from '../../data/facilities';
 
 export const getStaticPaths = langPaths;
@@ -21,32 +21,43 @@ const sub = { zh: '實驗室動態、獲獎與招生公告', en: 'Lab updates, a
   <section class="section">
     <div class="container list">
       {
-        news.map((n) => (
-          <article class="card item">
-            <div class="thumb">
-              <Img src={n.image} alt={t(n.title, lang)} lang={lang} ratio="4/3" label="News" />
-            </div>
-            <div>
-              <time>{n.date}</time>
-              <h2>
-                {n.url ? (
-                  <a href={n.url} target="_blank" rel="noopener noreferrer">
-                    {t(n.title, lang)} ↗
-                  </a>
-                ) : (
-                  t(n.title, lang)
-                )}
-              </h2>
-              {n.body && <p>{t(n.body, lang)}</p>}
-            </div>
-          </article>
-        ))
+        news.map((n) => {
+          const modalData: CardModalPayload = {
+            title: t(n.title, lang),
+            badge: n.date,
+            image: n.image ? withBase(n.image) : undefined,
+            desc: n.body ? t(n.body, lang) : t(n.title, lang),
+            actions: n.url
+              ? [{ label: t(ui.openExternalLink, lang), url: n.url, primary: true, external: true }]
+              : [],
+          };
+          return (
+            <article class="card item" tabindex="0" role="button" data-card-modal={JSON.stringify(modalData)}>
+              <div class="thumb">
+                <Img src={n.image} alt={t(n.title, lang)} lang={lang} ratio="4/3" label="News" />
+              </div>
+              <div>
+                <time>{n.date}</time>
+                <h2>
+                  {t(n.title, lang)}
+                  {n.url && <span class="ext-mark" aria-hidden="true"> ↗</span>}
+                </h2>
+                {n.body && <p>{t(n.body, lang)}</p>}
+                <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
+              </div>
+            </article>
+          );
+        })
       }
     </div>
   </section>
 </Base>
 
 <style>
+  .ext-mark {
+    color: var(--cyan-text);
+    font-size: 0.9em;
+  }
   .list {
     display: grid;
     gap: 1.25rem;

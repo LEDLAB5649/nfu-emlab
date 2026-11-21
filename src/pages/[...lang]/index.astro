@@ -1,23 +1,112 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Img from '../../components/Img.astro';
-import { langPaths, pageUrl, t, ui, withBase, type Lang } from '../../i18n/ui';
+import { langPaths, pageUrl, t, ui, withBase, type CardModalPayload, type Lang } from '../../i18n/ui';
 import { lab } from '../../data/lab';
 import { research } from '../../data/research';
-import { awards, patentGroups, publications } from '../../data/achievements';
+import { awards, medalLabel, patentGroups, patentType, publications } from '../../data/achievements';
 import { news } from '../../data/facilities';
-import { alumni } from '../../data/members';
+import { alumni, graduatedMsMembers } from '../../data/members';
 
 export const getStaticPaths = langPaths;
 const { lang } = Astro.props as { lang: Lang };
 
 const golds = awards.filter((a) => a.medal === 'gold').length;
+const silvers = awards.filter((a) => a.medal === 'silver').length;
+const bronzes = awards.filter((a) => a.medal === 'bronze').length;
+const otherAwards = awards.length - golds - silvers - bronzes;
 const patentCount = patentGroups.reduce((n, g) => n + g.patents.length, 0);
 const stats = [
-  { value: `${awards.length}+`, label: { zh: '國內外競賽與發明獎項', en: 'Invention & Innovation Awards', ja: '国内外受賞歴' } },
-  { value: `${golds}`, label: { zh: '國際金牌／首獎', en: 'Gold / Best Paper Awards', ja: '国際金賞・最優秀賞' } },
-  { value: `${patentCount}+`, label: { zh: '專利技術', en: 'Patents', ja: '特許・実用新案' } },
-  { value: `${alumni.length}+`, label: { zh: '歷屆培育人才', en: 'Graduates & Alumni', ja: '輩出人材・修了生' } },
+  {
+    value: `${awards.length}+`,
+    label: { zh: '國內外競賽與發明獎項', en: 'Invention & Innovation Awards', ja: '国内外受賞歴' },
+    modal: {
+      icon: '🏆',
+      badge: { zh: '實驗室榮譽紀錄', en: 'Lab Honors', ja: '受賞実績' },
+      desc: {
+        zh: `電子量測實驗室自 2010 年至 2026 年間，於英國倫敦、韓國首爾、馬來西亞 ITEX、台灣創新技術博覽會 (TIE)、IEEE 國際研討會及全國大專院校產學創新實作競賽累積超過 ${awards.length} 項獎項。`,
+        en: `From 2010 to 2026, our lab has earned over ${awards.length} honors across London, Seoul SIIF, Malaysia ITEX, Taiwan Innotech Expo (TIE), IEEE conferences, and national competitions.`,
+        ja: `2010年から2026年にかけて、ロンドン・ソウル・マレーシアITEX・TIE・IEEE国際会議・全国大会で${awards.length}件以上の賞を受賞しています。`,
+      },
+      list: [
+        { zh: `金牌／最佳論文首獎：${golds} 項`, en: `Gold / Best Paper Awards: ${golds}`, ja: `金賞・最優秀賞：${golds}件` },
+        { zh: `銀牌獎：${silvers} 項`, en: `Silver Medals: ${silvers}`, ja: `銀賞：${silvers}件` },
+        { zh: `銅牌／第三名：${bronzes} 項`, en: `Bronze Medals / 3rd Place: ${bronzes}`, ja: `銅賞・第3位：${bronzes}件` },
+        { zh: `創新設計與佳作等獎項：${otherAwards} 項`, en: `Innovation & Honorable Mention Awards: ${otherAwards}`, ja: `革新賞・佳作など：${otherAwards}件` },
+      ],
+      actionUrl: pageUrl(lang, 'achievements'),
+      actionLabel: { zh: '前往研究成果查看完整獲獎名單', en: 'View Full Awards Timeline', ja: '受賞歴一覧を見る' },
+    },
+  },
+  {
+    value: `${golds}`,
+    label: { zh: '國際金牌／首獎', en: 'Gold / Best Paper Awards', ja: '国際金賞・最優秀賞' },
+    modal: {
+      icon: '🥇',
+      badge: { zh: '最高榮譽紀錄', en: 'Top Honors', ja: '最高賞実績' },
+      desc: {
+        zh: '包含國際學術研討會最佳論文／壁報獎及世界三大國際發明展金牌殊榮：',
+        en: 'Includes Best Student Poster Awards at international conferences and Gold Medals at major invention exhibitions:',
+        ja: '国際学会最優秀賞および国際発明展金賞の受賞記録：',
+      },
+      list: awards
+        .filter((a) => a.medal === 'gold')
+        .map((a) => ({
+          zh: `[${a.year}] ${t(a.event, 'zh')}${a.detail ? ` — ${t(a.detail, 'zh')}` : ''}`,
+          en: `[${a.year}] ${t(a.event, 'en')}${a.detail ? ` — ${t(a.detail, 'en')}` : ''}`,
+          ja: `[${a.year}] ${t(a.event, 'ja')}${a.detail ? ` — ${t(a.detail, 'ja')}` : ''}`,
+        })),
+      actionUrl: pageUrl(lang, 'achievements'),
+      actionLabel: { zh: '查看所有得獎紀錄與新聞公告', en: 'View All Awards', ja: '受賞記録をすべて見る' },
+    },
+  },
+  {
+    value: `${patentCount}+`,
+    label: { zh: '專利技術', en: 'Patents', ja: '特許・実用新案' },
+    modal: {
+      icon: '📜',
+      badge: { zh: '智慧財產成果', en: 'Intellectual Property', ja: '知的財産実績' },
+      desc: {
+        zh: `指導教授陳文瑞帶領實驗室團隊研發獲得共 ${patentCount} 項中華民國發明專利與新型專利，橫跨工業量測、光電照明與生醫民生電子三大領域。`,
+        en: `Prof. Wen-Ray Chen and lab teams hold ${patentCount} R.O.C. invention and utility model patents across industrial metrology, optoelectronics lighting, and biomedical devices.`,
+        ja: `陳文瑞教授と研究室メンバーにより取得された中華民国特許・実用新案 ${patentCount}件の分野別内訳：`,
+      },
+      list: patentGroups.map((g) => ({
+        zh: `${t(g.category, 'zh')}（${g.patents.length} 項）：${g.patents.map((p) => t(p.title, 'zh')).join('、')}`,
+        en: `${t(g.category, 'en')} (${g.patents.length}): ${g.patents.map((p) => t(p.title, 'en')).join('; ')}`,
+        ja: `${t(g.category, 'ja')}（${g.patents.length}件）：${g.patents.map((p) => t(p.title, 'ja')).join('、')}`,
+      })),
+      actionUrl: pageUrl(lang, 'achievements'),
+      actionLabel: { zh: '查看完整專利分類列表', en: 'View All Patents', ja: '特許一覧を見る' },
+    },
+  },
+  {
+    value: `${alumni.length}+`,
+    label: { zh: '歷屆培育人才', en: 'Graduates & Alumni', ja: '輩出人材・修了生' },
+    modal: {
+      icon: '🎓',
+      badge: { zh: '人才培育成果', en: 'Talent Cultivation', ja: '人材育成実績' },
+      desc: {
+        zh: `自 2008 年至 2026 年累計培育超過 ${alumni.length} 位碩士班畢業生與大學部專題實作／國際競賽得獎學生，校友遍佈台灣各大半導體、光電與科技企業。`,
+        en: `Since 2008, our lab has trained over ${alumni.length} Master’s graduates and award-winning undergraduates now working across Taiwan’s semiconductor and high-tech industries.`,
+        ja: `2008年から2026年までに${alumni.length}名以上の大学院修了生・卒業研究学生を輩出し、半導体・光電子産業で活躍しています。`,
+      },
+      list: [
+        {
+          zh: `歷屆畢業碩士生（電子所／光電材料所）：${graduatedMsMembers.length} 位（均可於成員頁點選查看碩士論文）`,
+          en: `Graduated M.S. Students (EE / Optoelectronics): ${graduatedMsMembers.length} (Full profiles & theses on Members page)`,
+          ja: `歴代修士課程修了生：${graduatedMsMembers.length}名（メンバーページで論文詳細閲覧可能）`,
+        },
+        {
+          zh: `大學部專題生暨國際競賽／TIE 獲獎校友紀錄：${alumni.length - graduatedMsMembers.length} 筆`,
+          en: `Undergraduate Research & Competition Alumni Records: ${alumni.length - graduatedMsMembers.length}`,
+          ja: `学部卒業研究・国際コンテスト受賞者記録：${alumni.length - graduatedMsMembers.length}件`,
+        },
+      ],
+      actionUrl: pageUrl(lang, 'members'),
+      actionLabel: { zh: '前往成員頁面瀏覽完整名單', en: 'Browse Members & Alumni', ja: 'メンバー・修了生一覧へ' },
+    },
+  },
 ];
 const L = {
   researchTitle: { zh: '研究領域', en: 'Research Areas', ja: '研究分野' },
@@ -29,6 +118,13 @@ const L = {
   joinTitle: { zh: '一起來做研究吧！', en: 'Join our lab!', ja: '一緒に研究しませんか？' },
   pubsTitle: { zh: '代表性論文發表', en: 'Selected Publications', ja: '主要論文' },
   allAchievements: { zh: '查看全部研究成果', en: 'View all achievements', ja: '研究成果をすべて見る' },
+  keyTech: { zh: '關鍵技術', en: 'Key Technologies', ja: '主要技術' },
+  theses: { zh: '代表學位論文', en: 'Representative Theses', ja: '代表修士論文' },
+  apps: { zh: '應用領域', en: 'Applications', ja: '応用分野' },
+  openAreaPage: { zh: '前往研究領域專區查看', en: 'Open Research Section', ja: '研究分野セクションを開く' },
+  statDetailSec: { zh: '統計明細', en: 'Breakdown', ja: '実績内訳' },
+  pubAuthors: { zh: '作者群', en: 'Authors', ja: '著者' },
+  pubVenue: { zh: '發表期刊／會議', en: 'Journal / Conference', ja: '掲載誌・会議' },
   joinText: {
     zh: '歡迎對半導體、LED、光電量測與感測系統有興趣的專題生與碩士生加入。',
     en: 'We welcome undergraduate and graduate students interested in semiconductors, LEDs, optoelectronic measurement and sensing.',
@@ -84,12 +180,28 @@ const L = {
   <section class="stats">
     <div class="container stats-grid">
       {
-        stats.map((s) => (
-          <div class="stat">
-            <strong>{s.value}</strong>
-            <span>{t(s.label, lang)}</span>
-          </div>
-        ))
+        stats.map((s) => {
+          const modalData: CardModalPayload = {
+            icon: s.modal.icon,
+            badge: t(s.modal.badge, lang),
+            title: `${s.value} — ${t(s.label, lang)}`,
+            desc: t(s.modal.desc, lang),
+            sections: [
+              {
+                title: t(L.statDetailSec, lang),
+                list: s.modal.list.map((item) => t(item, lang)),
+              },
+            ],
+            actions: [{ label: t(s.modal.actionLabel, lang), url: s.modal.actionUrl, primary: true }],
+          };
+          return (
+            <div class="stat" tabindex="0" role="button" data-card-modal={JSON.stringify(modalData)}>
+              <strong>{s.value}</strong>
+              <span>{t(s.label, lang)}</span>
+              <small class="stat-hint">{t(ui.viewDetails, lang)} →</small>
+            </div>
+          );
+        })
       }
     </div>
   </section>
@@ -100,16 +212,41 @@ const L = {
       <p class="lead">{t(L.researchLead, lang)}</p>
       <div class="grid grid-3">
         {
-          research.map((r) => (
-            <a class="card" href={`${pageUrl(lang, 'research')}#${r.id}`}>
-              <Img src={r.image} alt={t(r.title, lang)} lang={lang} ratio="16/10" />
-              <h3>
-                {r.icon} {t(r.title, lang)}
-              </h3>
-              <p>{t(r.summary, lang)}</p>
-              <span class="more">{t(ui.learnMore, lang)} →</span>
-            </a>
-          ))
+          research.map((r) => {
+            const modalData: CardModalPayload = {
+              icon: r.icon,
+              badge: t(L.researchTitle, lang),
+              title: t(r.title, lang),
+              image: withBase(r.image),
+              desc: t(r.summary, lang),
+              sections: [
+                { title: t(L.keyTech, lang), list: r.points.map((pt) => t(pt, lang)) },
+                ...(r.theses?.length
+                  ? [
+                      {
+                        title: t(L.theses, lang),
+                        cards: r.theses.map((th) => ({
+                          title: t(th.title, lang),
+                          meta: `${t(th.student, lang)}${th.year ? ` (${th.year})` : ''}`,
+                        })),
+                      },
+                    ]
+                  : []),
+                { title: t(L.apps, lang), tags: r.applications.map((a) => t(a, lang)) },
+              ],
+              actions: [{ label: t(L.openAreaPage, lang), url: `${pageUrl(lang, 'research')}#${r.id}`, primary: true }],
+            };
+            return (
+              <a class="card" href={`${pageUrl(lang, 'research')}#${r.id}`} data-card-modal={JSON.stringify(modalData)}>
+                <Img src={r.image} alt={t(r.title, lang)} lang={lang} ratio="16/10" />
+                <h3>
+                  {r.icon} {t(r.title, lang)}
+                </h3>
+                <p>{t(r.summary, lang)}</p>
+                <span class="more">{t(ui.viewDetails, lang)} →</span>
+              </a>
+            );
+          })
         }
       </div>
     </div>
@@ -121,20 +258,29 @@ const L = {
         <h2 class="section-title">{t(ui.latestNews, lang)}</h2>
         <ul class="news-list">
           {
-            news.slice(0, 3).map((n) => (
-              <li>
-                <time>{n.date}</time>
-                <span>
-                  {n.url ? (
-                    <a class="pub-link" href={n.url} target="_blank" rel="noopener noreferrer">
-                      {t(n.title, lang)} ↗
-                    </a>
-                  ) : (
-                    t(n.title, lang)
-                  )}
-                </span>
-              </li>
-            ))
+            news.slice(0, 3).map((n) => {
+              const modalData: CardModalPayload = {
+                title: t(n.title, lang),
+                badge: n.date,
+                image: n.image ? withBase(n.image) : undefined,
+                desc: n.body ? t(n.body, lang) : t(n.title, lang),
+                actions: [
+                  ...(n.url ? [{ label: t(ui.openExternalLink, lang), url: n.url, primary: true, external: true }] : []),
+                  { label: t(ui.allNews, lang), url: pageUrl(lang, 'news'), primary: !n.url },
+                ],
+              };
+              return (
+                <li tabindex="0" role="button" data-card-modal={JSON.stringify(modalData)}>
+                  <time>{n.date}</time>
+                  <span>
+                    <span class={n.url ? 'pub-link' : undefined}>
+                      {t(n.title, lang)}
+                      {n.url ? ' ↗' : ''}
+                    </span>
+                  </span>
+                </li>
+              );
+            })
           }
         </ul>
         <a href={pageUrl(lang, 'news')}>{t(ui.allNews, lang)} →</a>
@@ -143,17 +289,30 @@ const L = {
         <h2 class="section-title">{t(L.pubsTitle, lang)}</h2>
         <ul class="news-list">
           {
-            publications.slice(0, 3).map((p) => (
-              <li>
-                <time>{p.year}</time>
-                <span>
-                  <a class="pub-link" href={p.url} target="_blank" rel="noopener noreferrer">
-                    {p.title} ↗
-                  </a>{' '}
-                  <em>— {p.venue}</em>
-                </span>
-              </li>
-            ))
+            publications.slice(0, 3).map((p) => {
+              const modalData: CardModalPayload = {
+                icon: '📄',
+                badge: String(p.year),
+                title: p.title,
+                subtitle: p.venue,
+                sections: [
+                  { title: t(L.pubAuthors, lang), list: [p.authors] },
+                  { title: t(L.pubVenue, lang), list: [`${p.venue} (${p.year})`] },
+                ],
+                actions: [
+                  { label: t(ui.openExternalLink, lang), url: p.url, primary: true, external: true },
+                  { label: t(L.allAchievements, lang), url: pageUrl(lang, 'achievements') },
+                ],
+              };
+              return (
+                <li tabindex="0" role="button" data-card-modal={JSON.stringify(modalData)}>
+                  <time>{p.year}</time>
+                  <span>
+                    <span class="pub-link">{p.title} ↗</span> <em>— {p.venue}</em>
+                  </span>
+                </li>
+              );
+            })
           }
         </ul>
         <a href={pageUrl(lang, 'achievements')}>{t(L.allAchievements, lang)} →</a>
@@ -388,6 +547,16 @@ const L = {
     color: var(--muted);
     font-size: 0.9rem;
   }
+  .stat-hint {
+    margin-top: 0.45rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--cyan-text);
+    transition: transform 0.2s ease;
+  }
+  .stat:hover .stat-hint {
+    transform: translateX(3px);
+  }
   .more {
     color: var(--cyan-text);
     font-weight: 700;
@@ -401,8 +570,14 @@ const L = {
   .news-list li {
     display: flex;
     gap: 1rem;
-    padding: 0.85rem 0;
+    padding: 0.85rem 0.65rem;
+    margin: 0 -0.65rem;
+    border-radius: 10px;
     border-bottom: 1px solid var(--line);
+    transition: background 0.18s ease;
+  }
+  .news-list li[data-card-modal]:hover {
+    background: var(--cyan-soft);
   }
   .news-list time {
     color: var(--cyan-text);

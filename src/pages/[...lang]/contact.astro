@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { langPaths, nav, t, type Lang } from '../../i18n/ui';
+import { langPaths, nav, pageUrl, t, ui, type CardModalPayload, type Lang } from '../../i18n/ui';
 import { lab, pi } from '../../data/lab';
 
 export const getStaticPaths = langPaths;
@@ -31,12 +31,32 @@ const L = {
       ja: '学部3・4年生および修士課程志望者',
     },
   ],
+  whoDesc: {
+    zh: '歡迎對電子量測、半導體製程、光電元件設計與嵌入式 AIoT 懷抱熱忱的同學預約參觀 ATC 0102，與指導教授及學長姐面對面討論專題與研究規劃。',
+    en: 'Motivated undergraduate and prospective M.S. students interested in metrology, semiconductors, optoelectronics, or AIoT are welcome to visit ATC 0102 and meet Prof. Chen and current students.',
+    ja: '電子計測・半導体プロセス・光電デバイス・AIoTに関心のある学部生・大学院志望者の研究室見学（ATC 0102）や面談を随時受け付けています。',
+  },
+  whoProcess: [
+    { zh: '① 先透過 Email 或於系辦／研究室時間與陳文瑞教授預約面談。', en: '① Email Prof. Wen-Ray Chen or schedule an office-hour chat.', ja: '① メール等で陳文瑞教授との面談を予約。' },
+    { zh: '② 參觀 ATC 0102 量測與製程機台，了解感興趣的研究組別。', en: '② Tour ATC 0102 facilities and meet senior lab members.', ja: '② ATC 0102の設備見学と先輩学生との懇談。' },
+    { zh: '③ 大學部可從基礎儀器認證與專題實作起步，碩士班深入研發與競賽發表。', en: '③ Start with core instrumentation & projects; advance to research & conferences in M.S.', ja: '③ 学部生は基礎実習からスタートし、修士課程で先端研究・学会発表へ発展。' },
+  ],
   gain: { zh: '你會學到', en: 'What you will learn', ja: '身につくこと' },
   gainList: [
     { zh: '精密電子/光電量測儀器操作', en: 'Operating precision electronic & optical instruments', ja: '精密電子・光学計測機器の操作' },
     { zh: '半導體薄膜製程與分析', en: 'Thin-film fabrication and analysis', ja: '半導体薄膜の作製と解析' },
     { zh: '產學合作專案經驗', en: 'Industry project experience', ja: '産学連携プロジェクトの経験' },
     { zh: '國際發明展參賽機會', en: 'Chances to compete in international invention shows', ja: '国際発明展への出展機会' },
+  ],
+  gainDesc: {
+    zh: '實驗室兼顧元件物理實務與系統整合實作能力，讓每位成員都能累積具產業競爭力的研發經歷與實戰作品集。',
+    en: 'The lab balances hands-on device physics with system integration skills, building an industry-ready portfolio of real prototypes and publications.',
+    ja: 'デバイス物性とシステム統合の実践力をバランスよく身につけ、産業界で通用する研究開発実績を積むことができます。',
+  },
+  gainDetails: [
+    { zh: '儀器實操：微探針量測台、大小型積分球光譜系統、BK 高速示波器、熱蒸鍍與磁控濺鍍系統。', en: 'Instrumentation: Micro-probe station, integrating spheres, BK oscilloscopes, thermal & sputter coaters.', ja: '主要機器：プローブ台、各種積分球、高速オシロ、真空蒸着・スパッタ装置。' },
+    { zh: '軟體與開發：LabVIEW 自動量測控制、ESP32 / Python AIoT 韌體、SolidWorks / Fusion 360 治具與 3D 列印。', en: 'Software & Dev: LabVIEW automation, ESP32/Python AIoT firmware, CAD & 3D prototyping.', ja: '開発技術：LabVIEW自動計測、ESP32/Python AIoT開発、CAD設計・3D造形。' },
+    { zh: '成果展現：國內外期刊論文發表、IEEE 國際研討會口頭／海報報告、TIE 與全國大賽實機參展。', en: 'Outcomes: SCI journals, IEEE international conferences, TIE & national competitions.', ja: '実績展開：国際学術誌、IEEE国際学会発表、TIE国際発明展・全国コンテスト出展。' },
   ],
   collab: { zh: '產學合作', en: 'Industry Collaboration', ja: '産学連携' },
   collabText: {
@@ -45,6 +65,12 @@ const L = {
     ja: 'LEDパッケージング、放熱設計、光電子検査、自動計測システムの豊富な経験を活かし、企業との共同研究や計測受託のご相談を歓迎します。',
   },
   mail: { zh: '寄信給我們', en: 'Email us', ja: 'メールを送る' },
+  openMaps: { zh: '在 Google 地圖開啟', en: 'Open in Maps', ja: 'Googleマップで開く' },
+  secDetail: { zh: '詳細地點與聯絡管道', en: 'Location & Contact Channels', ja: '所在地・連絡窓口' },
+  secProcess: { zh: '申請與加入流程', en: 'How to Join', ja: '配属・参加の流れ' },
+  secSkills: { zh: '核心訓練項目', en: 'Core Training Highlights', ja: '育成スキル詳細' },
+  viewResearch: { zh: '瀏覽研究領域', en: 'Explore Research Areas', ja: '研究分野を見る' },
+  viewFacilities: { zh: '查看設備與規範', en: 'View Equipment & Rules', ja: '設備・規則を見る' },
 };
 ---
 
@@ -58,7 +84,34 @@ const L = {
 
   <section class="section">
     <div class="container grid grid-2">
-      <div class="card">
+      <div
+        class="card"
+        tabindex="0"
+        role="button"
+        data-card-modal={JSON.stringify({
+          icon: '🏢',
+          badge: t(L.info, lang),
+          title: t(lab.name, lang),
+          subtitle: t(lab.location, lang),
+          desc: t(lab.intro, lang),
+          sections: [
+            {
+              title: t(L.secDetail, lang),
+              list: [
+                `${t(L.lab, lang)}：${t(lab.location, lang)}`,
+                `${t(L.addr, lang)}：${t(lab.address, lang)}`,
+                `${t(L.phone, lang)}：${pi.phoneLab} / ${pi.phoneOffice}`,
+                `Email：${pi.email}`,
+                t(pi.office, lang),
+              ],
+            },
+          ],
+          actions: [
+            { label: `✉️ ${t(L.mail, lang)}`, url: `mailto:${pi.email}`, primary: true, contactEmail: true },
+            { label: `📍 ${t(L.openMaps, lang)}`, url: 'https://maps.app.goo.gl/H6PMFg5xk6Nzutm77', external: true },
+          ],
+        } satisfies CardModalPayload)}
+      >
         <h2 class="section-title">{t(L.info, lang)}</h2>
         <dl>
           <dt>{t(L.lab, lang)}</dt>
@@ -74,7 +127,10 @@ const L = {
           <dt>Email</dt>
           <dd><a href={`mailto:${pi.email}`} data-contact-email-trigger>{pi.email}</a></dd>
         </dl>
-        <button type="button" class="btn btn-primary" id="btn-mail-us" data-contact-email-trigger>✉️ {t(L.mail, lang)}</button>
+        <div class="contact-card-footer">
+          <button type="button" class="btn btn-primary" id="btn-mail-us" data-contact-email-trigger>✉️ {t(L.mail, lang)}</button>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
+        </div>
       </div>
 
       <div class="card map-card">
@@ -107,13 +163,51 @@ const L = {
     <div class="container">
       <h2 class="section-title">{t(L.join, lang)}</h2>
       <div class="grid grid-2" style="margin-top:1.5rem">
-        <div class="card">
+        <div
+          class="card card-interactive"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '🎯',
+            badge: t(L.join, lang),
+            title: t(L.who, lang),
+            desc: t(L.whoDesc, lang),
+            sections: [
+              { title: t(L.who, lang), list: L.whoList.map((x) => t(x, lang)) },
+              { title: t(L.secProcess, lang), list: L.whoProcess.map((x) => t(x, lang)) },
+            ],
+            actions: [
+              { label: `✉️ ${t(L.mail, lang)}`, url: `mailto:${pi.email}`, primary: true, contactEmail: true },
+              { label: t(L.viewResearch, lang), url: pageUrl(lang, 'research') },
+            ],
+          } satisfies CardModalPayload)}
+        >
           <h3>🎯 {t(L.who, lang)}</h3>
           <ul>{L.whoList.map((x) => <li>{t(x, lang)}</li>)}</ul>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
-        <div class="card">
+        <div
+          class="card card-interactive"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '🚀',
+            badge: t(L.join, lang),
+            title: t(L.gain, lang),
+            desc: t(L.gainDesc, lang),
+            sections: [
+              { title: t(L.gain, lang), list: L.gainList.map((x) => t(x, lang)) },
+              { title: t(L.secSkills, lang), list: L.gainDetails.map((x) => t(x, lang)) },
+            ],
+            actions: [
+              { label: t(L.viewFacilities, lang), url: pageUrl(lang, 'facilities'), primary: true },
+              { label: t(L.viewResearch, lang), url: pageUrl(lang, 'research') },
+            ],
+          } satisfies CardModalPayload)}
+        >
           <h3>🚀 {t(L.gain, lang)}</h3>
           <ul>{L.gainList.map((x) => <li>{t(x, lang)}</li>)}</ul>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
       </div>
     </div>
@@ -128,6 +222,24 @@ const L = {
 </Base>
 
 <style>
+  .contact-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .contact-card-footer .card-click-hint {
+    margin-top: 0;
+  }
+  .card-interactive {
+    display: flex;
+    flex-direction: column;
+  }
+  .card-interactive .card-click-hint {
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
   dl {
     margin: 1rem 0 1.5rem;
   }

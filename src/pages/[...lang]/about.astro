@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Img from '../../components/Img.astro';
-import { langPaths, nav, pageUrl, t, type Lang } from '../../i18n/ui';
+import { langPaths, nav, pageUrl, t, ui, withBase, type CardModalPayload, type Lang } from '../../i18n/ui';
 import { lab, pi } from '../../data/lab';
 
 export const getStaticPaths = langPaths;
@@ -21,6 +21,41 @@ const L = {
   courses: { zh: '開授課程方向', en: 'Courses Taught', ja: '担当科目分野' },
   patents: { zh: '代表專利成果', en: 'Selected Patents', ja: '主な特許実績' },
   officialPage: { zh: '虎科大電子系教師官方專頁', en: 'NFU Official Faculty Profile', ja: '虎尾科大 電子工学科 教員紹介ページ' },
+  envTitle: { zh: '實驗室環境與實體機台實景', en: 'Laboratory Facilities & Environment', ja: '研究室環境・実機設備' },
+  actTitle: { zh: '歷屆學長姐與團隊活動剪影', en: 'Team & Alumni Activity Highlights', ja: '歴代の先輩方・チーム活動の記録' },
+  viewAllEquip: { zh: '前往設備與規範頁面', en: 'Go to Equipment & Facilities', ja: '設備・規則ページへ' },
+  viewAchievements: { zh: '前往研究成果頁面', en: 'Go to Achievements', ja: '研究成果ページへ' },
+  viewMembers: { zh: '前往成員頁面', en: 'Go to Members Page', ja: 'メンバーページへ' },
+  viewContact: { zh: '預約參觀／聯絡實驗室', en: 'Visit / Contact Lab', ja: '見学・お問い合わせ' },
+  missionDetails: [
+    {
+      points: [
+        { zh: '數位示波器 (BK 2565B)、任意波形產生器與高精度五位半電表實機操作', en: 'Hands-on mastery of BK 2565B DSO, waveform generators, and 50,000-count DMM', ja: 'デジタルオシロ・任意波形発生器・高精度マルチメータの実機実習' },
+        { zh: '微電子半導體微探針平台與 I-V 電性特性擷取訓練', en: 'Semiconductor micro-probe station & I-V electrical measurement training', ja: 'マイクロプローブによるI-V電気特性測定訓練' },
+        { zh: '實驗室用電安全與真空設備標準作業流程 (SOP) 認證', en: 'Lab electrical safety and vacuum system SOP certification', ja: '電気安全・真空装置標準作業手順（SOP）の習得' },
+      ],
+      url: pageUrl(lang, 'facilities'),
+      actionLabel: { zh: '查看所有實驗室設備與安全規範', en: 'View Facilities & Safety Rules', ja: '設備・安全規則を見る' },
+    },
+    {
+      points: [
+        { zh: '結合 ESP32 /感測器電路整合與 LabVIEW／Python 自動化量測開發', en: 'ESP32/sensor circuits combined with LabVIEW & Python automated metrology', ja: 'ESP32センサー回路とLabVIEW／Python自動計測の統合開発' },
+        { zh: '使用 3D 列印機（Phrozen FDM）製作客製化檢測治具與系統機構外殼', en: 'Rapid prototyping of test fixtures and housings with Phrozen FDM 3D printer', ja: 'Phrozen FDM 3Dプリンターによる測定治具・筐体の試作製作' },
+        { zh: '輔導參與全國大專院校產學創新實作競賽與 TIE 台灣創新技術博覽會', en: 'Mentoring for National Innovation Competition and Taiwan Innotech Expo (TIE)', ja: '全国イノベーションコンテストやTIE国際発明展への出展指導' },
+      ],
+      url: pageUrl(lang, 'research'),
+      actionLabel: { zh: '探索六大核心研究領域', en: 'Explore Research Areas', ja: '6つの研究分野を見る' },
+    },
+    {
+      points: [
+        { zh: '執行鈣鈦礦／量子點光電薄膜製備（熱蒸鍍・磁控濺鍍）與積分球光譜特性研究', en: 'Perovskite/QD thin-film fabrication (evaporation & sputtering) and integrating sphere spectroscopy', ja: 'ペロブスカイト・QD薄膜作製（蒸着・スパッタ）および積分球分光評価' },
+        { zh: '帶領參與國科會／科技部研究計畫與中台灣科學園區產學實務開發', en: 'Participating in NSTC research grants and Central Taiwan industry-academia projects', ja: '国科会（NSTC）研究プロジェクトおよび産学連携開発への参画' },
+        { zh: '發表 MDPI Crystals、Springer Nature 等 SCI 國際期刊與 IEEE 會議論文', en: 'Publishing in SCI journals (MDPI Crystals, Springer) and IEEE conferences', ja: 'MDPI Crystals等のSCI国際論文誌およびIEEE国際学会での発表' },
+      ],
+      url: pageUrl(lang, 'achievements'),
+      actionLabel: { zh: '瀏覽歷年論文與專利成果', en: 'View Publications & Patents', ja: '論文・特許実績を見る' },
+    },
+  ],
 };
 ---
 
@@ -39,12 +74,38 @@ const L = {
         <p>{t(lab.intro, lang)}</p>
         <p><span class="tag">📍 {t(lab.location, lang)}</span></p>
       </div>
-      <figure class="lab-plaque-figure">
+      <figure
+        class="lab-plaque-figure card photo-card"
+        tabindex="0"
+        role="button"
+        data-card-modal={JSON.stringify({
+          title: t({ zh: '電子量測實驗室 實體門牌（ATC 0102）', en: 'Electronic Measurement Lab Official Plaque (ATC 0102)', ja: '電子計測研究室 公式木彫表札（ATC 0102）' }, lang),
+          badge: t(L.intro, lang),
+          subtitle: t(lab.location, lang),
+          image: withBase(lab.labImage),
+          desc: t(lab.intro, lang),
+          sections: [
+            {
+              title: t(L.contact, lang),
+              list: [
+                t(lab.location, lang),
+                t(lab.address, lang),
+                `Tel: ${pi.phoneLab} / ${pi.phoneOffice}`,
+              ],
+            },
+          ],
+          actions: [
+            { label: t(L.viewContact, lang), url: pageUrl(lang, 'contact'), primary: true },
+            { label: t(L.viewMembers, lang), url: pageUrl(lang, 'members') },
+          ],
+        } satisfies CardModalPayload)}
+      >
         <Img src={lab.labImage} alt={t(lab.name, lang)} lang={lang} ratio="4/3" label="Lab Plaque" />
         <figcaption class="plaque-caption">
           <strong>{t({ zh: '電子量測實驗室 實體門牌', en: 'Electronic Measurement Lab Official Plaque', ja: '電子計測研究室 公式木彫表札' }, lang)}</strong>
           <span>📍 {t(lab.location, lang)}</span>
         </figcaption>
+        <span class="card-click-hint" style="text-align:center">{t(ui.viewDetails, lang)} →</span>
       </figure>
     </div>
   </section>
@@ -54,13 +115,38 @@ const L = {
       <h2 class="section-title">{t(L.mission, lang)}</h2>
       <div class="steps">
         {
-          lab.mission.map((m, i) => (
-            <div class="card step">
-              <span class="num">0{i + 1}</span>
-              <h3>{t(m.title, lang)}</h3>
-              <p>{t(m.desc, lang)}</p>
-            </div>
-          ))
+          lab.mission.map((m, i) => {
+            const detail = L.missionDetails[i];
+            return (
+              <div
+                class="card step card-interactive"
+                tabindex="0"
+                role="button"
+                data-card-modal={JSON.stringify({
+                  icon: `0${i + 1}`,
+                  badge: t(L.mission, lang),
+                  title: t(m.title, lang),
+                  desc: t(m.desc, lang),
+                  sections: detail
+                    ? [
+                        {
+                          title: t({ zh: '培育重點與實作內容', en: 'Training Focus & Activities', ja: '育成内容・実習テーマ' }, lang),
+                          list: detail.points.map((pt) => t(pt, lang)),
+                        },
+                      ]
+                    : [],
+                  actions: detail
+                    ? [{ label: t(detail.actionLabel, lang), url: detail.url, primary: true }]
+                    : [],
+                } satisfies CardModalPayload)}
+              >
+                <span class="num">0{i + 1}</span>
+                <h3>{t(m.title, lang)}</h3>
+                <p>{t(m.desc, lang)}</p>
+                <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
+              </div>
+            );
+          })
         }
       </div>
     </div>
@@ -68,20 +154,59 @@ const L = {
 
   <section class="section">
     <div class="container">
-      <h2 class="section-title">{t({ zh: '實驗室環境與實體機台實景', en: 'Laboratory Facilities & Environment', ja: '研究室環境・実機設備' }, lang)}</h2>
+      <h2 class="section-title">{t(L.envTitle, lang)}</h2>
       <p class="lead" style="margin-bottom: 2rem;">{t({ zh: '由歷屆學長姐與團隊夥伴共同維護的專業量測環境（ATC 0102）', en: 'Professional electronic measurement environment in ATC 0102', ja: '歴代の先輩方とメンバーで整備されたATC 0102の測定環境' }, lang)}</p>
       <div class="grid grid-3 lab-photos-grid">
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '🔬',
+            badge: t(L.envTitle, lang),
+            title: t({ zh: '半導體微探針量測平台', en: 'Micro-Probe Measurement Station', ja: 'マイクロプローブ計測ステーション' }, lang),
+            image: withBase('/images/equipment/probe-station.webp'),
+            desc: t({ zh: '高倍率顯微鏡結合微米級探針位移平台與溫控載台，專門進行微電子晶片、薄膜元件微接觸量測與電氣特性 (I-V) 分析。', en: 'High-magnification microscope integrated with micron-level probe positioners and thermal stage for microelectronic chip and thin-film I-V characterization.', ja: '高倍率光学顕微鏡とマイクロプローブ移動機構・温度制御ステージを統合し、微小電子素子や薄膜の電気特性を精密測定。' }, lang),
+            actions: [{ label: t(L.viewAllEquip, lang), url: pageUrl(lang, 'facilities'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/equipment/probe-station.webp" alt="半導體微探針量測平台" lang={lang} ratio="4/3" />
           <p class="photo-caption">🔬 <strong>{t({ zh: '半導體微探針量測平台', en: 'Micro-Probe Station', ja: 'マイクロプローブ計測' }, lang)}</strong></p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '📊',
+            badge: t(L.envTitle, lang),
+            title: t({ zh: '高速數位存儲示波器 (BK Precision 2565B)', en: 'BK Precision 2565B Digital Storage Oscilloscope', ja: 'BK Precision 2565B デジタルストレージオシロスコープ' }, lang),
+            image: withBase('/images/equipment/daq.webp'),
+            desc: t({ zh: '100 MHz 頻寬雙通道數位示波器，提供高速即時波形取樣、微弱信號捕捉、雜訊濾波與自動化頻率參數分析。', en: '100 MHz dual-channel digital oscilloscope for high-speed waveform acquisition, weak-signal capture, noise filtering and automated parametric analysis.', ja: '100MHz帯域のデジタルストレージオシロスコープ。高速波形サンプリング・微弱信号捕捉・自動パラメータ測定に対応。' }, lang),
+            actions: [{ label: t(L.viewAllEquip, lang), url: pageUrl(lang, 'facilities'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/equipment/daq.webp" alt="高速數位示波器" lang={lang} ratio="4/3" />
           <p class="photo-caption">📊 <strong>{t({ zh: '高速數位示波器 (BK 2565B)', en: 'Digital Storage Oscilloscope', ja: 'デジタルオシロスコープ' }, lang)}</strong></p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '⚡',
+            badge: t(L.envTitle, lang),
+            title: t({ zh: '真空熱蒸鍍沉積機台 (VD-7071)', en: 'Vacuum Thermal Evaporation Deposition System (VD-7071)', ja: '真空熱蒸着成膜装置 (VD-7071)' }, lang),
+            image: withBase('/images/equipment/rta.webp'),
+            desc: t({ zh: '配備 VD-7071 專用蒸鍍沉積電源供應器、精密切換電錶與高真空不鏽鋼腔體，專用於半導體電極金屬化（如 Al、Ag、Au）及光電薄膜熱蒸鍍製程。', en: 'Equipped with VD-7071 deposition power supply, precision AC meters, and stainless steel high-vacuum chamber for semiconductor electrode metallization and thin-film evaporation.', ja: 'VD-7071蒸着用電源・高精度計器・高真空チャンバーを備え、電極金属化（Al・Ag・Au）や光電薄膜の熱蒸着成膜に使用。' }, lang),
+            actions: [{ label: t(L.viewAllEquip, lang), url: pageUrl(lang, 'facilities'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/equipment/rta.webp" alt="真空熱蒸鍍沉積機台" lang={lang} ratio="4/3" />
           <p class="photo-caption">⚡ <strong>{t({ zh: '真空熱蒸鍍沉積機台 (VD-7071)', en: 'Vacuum Thermal Evaporator', ja: '真空熱蒸着成膜装置' }, lang)}</strong></p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
       </div>
       <div style="margin-top: 1.75rem; text-align: center;">
@@ -92,43 +217,134 @@ const L = {
 
   <section class="section alt">
     <div class="container">
-      <h2 class="section-title">{t({ zh: '歷屆學長姐與團隊活動剪影', en: 'Team & Alumni Activity Highlights', ja: '歴代の先輩方・チーム活動の記録' }, lang)}</h2>
+      <h2 class="section-title">{t(L.actTitle, lang)}</h2>
       <p class="lead" style="margin-bottom: 2rem;">{t({ zh: '凝聚智慧與汗水，代表虎科大於國際學術研討會與全國創新競賽屢獲殊榮的真實影像記錄', en: 'Honoring the dedication of our students representing NFU at international conferences and national competitions', ja: '国際学会や全国コンテストで活躍してきた歴代メンバーの実際の活動記録' }, lang)}</p>
       <div class="grid grid-3 lab-photos-grid">
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '🏆',
+            badge: t(L.actTitle, lang),
+            title: t({ zh: 'IEEE ICCT-Pacific 2026 國際獲獎', en: 'ICCT-Pacific 2026 Award in Japan', ja: 'IEEE ICCT-Pacific 2026 国際受賞' }, lang),
+            image: withBase('/images/seniors/icct-2026-award.webp'),
+            desc: t({ zh: '日本山口大學，劉峻瑋、洪梓瑜、潘昱澤榮獲最佳學生壁報論文獎（Best Student Poster Award）— AIoT Base Smart Consumables Drying Cabinet（陳文瑞教授指導）。', en: 'Yamaguchi University, Japan — Best Student Poster Award for "AIoT Base Smart Consumables Drying Cabinet" (Jun-Wei Liu, Zi-Yu Hong, Yu-Zan Pan; Advised by Prof. Wen-Ray Chen).', ja: '日本山口大学にて「AIoT Base Smart Consumables Drying Cabinet」により最優秀学生ポスター賞を受賞（劉峻瑋・洪梓瑜・潘昱澤、指導：陳文瑞教授）。' }, lang),
+            actions: [{ label: t(L.viewAchievements, lang), url: pageUrl(lang, 'achievements'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/seniors/icct-2026-award.webp" alt="IEEE ICCT-Pacific 2026 獲獎" lang={lang} ratio="4/3" />
           <p class="photo-caption">🏆 <strong>{t({ zh: 'IEEE ICCT-Pacific 2026 國際獲獎', en: 'ICCT-Pacific 2026 Award in Japan', ja: 'IEEE ICCT-Pacific 2026 国際受賞' }, lang)}</strong></p>
           <p class="activity-desc">{t({ zh: '日本山口大學，劉峻瑋、洪梓瑜、潘昱澤榮獲最佳學生壁報論文獎', en: 'Yamaguchi University, Japan — Best Student Poster Award', ja: '日本山口大学にて最優秀学生ポスター賞を受賞' }, lang)}</p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '🥉',
+            badge: t(L.actTitle, lang),
+            title: t({ zh: '2025 全國產學創新實作競賽', en: '2025 National Innovation Competition', ja: '2025 全国イノベーション大会' }, lang),
+            image: withBase('/images/news/innovation-2025.webp'),
+            desc: t({ zh: '陳文瑞教授指導陳昱琮、潘昱澤、許育人以「智慧型即時跌倒偵測系統之開發與應用」榮獲機械自動化及手工具創新組全國第三名。', en: 'Advised by Prof. Wen-Ray Chen, Yu-Cong Chen, Yu-Zan Pan, and Yu-Ren Xu won 3rd Place in Mechanical Automation & Hand-Tool Innovation with "Smart Real-Time Fall Detection System".', ja: '陳文瑞教授指導の陳昱琮・潘昱澤・許育人が「スマートリアルタイム転倒検知システム」で全国第3位を受賞。' }, lang),
+            actions: [{ label: t(L.viewAchievements, lang), url: pageUrl(lang, 'achievements'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/news/innovation-2025.webp" alt="2025 全國產學創新實作競賽第三名" lang={lang} ratio="4/3" />
           <p class="photo-caption">🥉 <strong>{t({ zh: '2025 全國產學創新實作競賽', en: '2025 National Innovation Competition', ja: '2025 全国イノベーション大会' }, lang)}</strong></p>
           <p class="activity-desc">{t({ zh: '陳文瑞教授指導陳昱琮、潘昱澤、許育人以「智慧型即時跌倒偵測系統」榮獲全國第三名', en: 'Advised by Prof. Chen, team won 3rd Place with Fall Detection System', ja: 'スマート転倒検知システムにて全国第3位を受賞' }, lang)}</p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '🥇',
+            badge: t(L.actTitle, lang),
+            title: t({ zh: '2024 全國創新實作競賽獲獎', en: '2024 National Innovation Award', ja: '2024 全国イノベーション大会受賞' }, lang),
+            image: withBase('/images/seniors/innovation-2024-team.webp'),
+            desc: t({ zh: '陳文瑞教授指導朱囿儒、林學澤、張翔袁、陳昱琮、潘昱澤以「踏板發電在智慧老年健康復健系統的應用」榮獲手工具創新設計獎。', en: 'Advised by Prof. Chen, students Yu-Ru Zhu, Xue-Ze Lin, Xiang-Yuan Zhang, Yu-Cong Chen, and Yu-Zan Pan won the Hand-Tool Innovation Design Award for "Pedal Power Generation in Smart Elderly Rehabilitation Systems".', ja: '陳文瑞教授と学生チームが「ペダル発電を用いた高齢者スマート健康リハビリシステム」で革新デザイン賞を受賞。' }, lang),
+            actions: [{ label: t(L.viewAchievements, lang), url: pageUrl(lang, 'achievements'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/seniors/innovation-2024-team.webp" alt="2024 全國產學創新實作競賽" lang={lang} ratio="4/3" />
           <p class="photo-caption">🥇 <strong>{t({ zh: '2024 全國創新實作競賽獲獎', en: '2024 National Innovation Award', ja: '2024 全国イノベーション大会受賞' }, lang)}</strong></p>
           <p class="activity-desc">{t({ zh: '陳文瑞教授與朱囿儒、林學澤、張翔袁、陳昱琮、潘昱澤榮獲手工具創新設計獎', en: 'Advised by Prof. Chen, team won Innovation Design Award', ja: '陳文瑞教授と学生チームが革新デザイン賞を受賞' }, lang)}</p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '🎖️',
+            badge: t(L.actTitle, lang),
+            title: t({ zh: '2023 全國產學創新實作競賽', en: '2023 National Innovation Team', ja: '2023 全国イノベーション大会' }, lang),
+            image: withBase('/images/seniors/innovation-2023-team.webp'),
+            desc: t({ zh: '林揚恩、陳靖中、林學澤、朱囿儒、張翔袁以「應用於金屬加工液的 IoT 落球式油濃度量測系統」榮獲佳作獎。', en: 'Students Yang-En Lin, Jing-Zhong Chen, Xue-Ze Lin, Yu-Ru Zhu, and Xiang-Yuan Zhang won Honorable Mention for "IoT Falling-Ball Oil Concentration Measurement System for Metalworking Fluids".', ja: '林揚恩・陳靖中・林學澤・朱囿儒・張翔袁が「金属加工液向けIoT落球式油濃度計測システム」で佳作受賞。' }, lang),
+            actions: [{ label: t(L.viewAchievements, lang), url: pageUrl(lang, 'achievements'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/seniors/innovation-2023-team.webp" alt="2023 全國產學創新實作競賽" lang={lang} ratio="4/3" />
           <p class="photo-caption">🎖️ <strong>{t({ zh: '2023 全國產學創新實作競賽', en: '2023 National Innovation Team', ja: '2023 全国イノベーション大会' }, lang)}</strong></p>
           <p class="activity-desc">{t({ zh: '林揚恩、陳靖中、林學澤、朱囿儒、張翔袁榮獲佳作獎', en: 'Team won Honorable Mention for IoT concentration sensing', ja: '落球式油濃度計測システムにて佳作受賞' }, lang)}</p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '⚙️',
+            badge: t(L.actTitle, lang),
+            title: t({ zh: '競賽展位實機操作與量測展示', en: 'On-site Prototype Demonstration', ja: 'コンテスト会場での実機デモ' }, lang),
+            image: withBase('/images/seniors/innovation-2023-demo.webp'),
+            desc: t({ zh: '學長姐於全國大賽展位向產學評審委員實機展示 IoT 落球式油品濃度與粘滯度量測機構及即時雲端監控系統。', en: 'Live demonstration of the IoT falling-ball metalworking fluid oil concentration & viscosity measurement apparatus and real-time cloud dashboard to judges.', ja: '全国大会ブースにて、審査員に向けてIoT落球式金属加工液濃度・粘度計測装置とリアルタイムクラウド監視システムを実演展示。' }, lang),
+            actions: [{ label: t(L.viewAchievements, lang), url: pageUrl(lang, 'achievements'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/seniors/innovation-2023-demo.webp" alt="2023 競賽現場實機展示" lang={lang} ratio="4/3" />
           <p class="photo-caption">⚙️ <strong>{t({ zh: '競賽展位實機操作與量測展示', en: 'On-site Prototype Demonstration', ja: 'コンテスト会場での実機デモ' }, lang)}</strong></p>
           <p class="activity-desc">{t({ zh: '學長姐於全國大賽展位向產學評審委員展示 IoT 落球式油品檢測機台', en: 'Live demonstration of the IoT oil sensing apparatus to judges', ja: '審査員に向けたIoT落球式検査装置の実機デモンストレーション' }, lang)}</p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '🥉',
+            badge: t(L.actTitle, lang),
+            title: t({ zh: '2021 台灣創新技術博覽會 (TIE)', en: '2021 Taiwan Innotech Expo', ja: '2021 台湾イノテックエキスポ' }, lang),
+            image: withBase('/images/seniors/tie-2021-team.webp'),
+            desc: t({ zh: '蕭宇良、陳彰、張日星、葉佩欣以「電池履歷系統」（中華民國新型專利 TWM617006U）榮獲 2021 台灣創新技術博覽會發明競賽銅牌獎。', en: 'Yu-Liang Xiao, Zhang Chen, Ri-Xing Zhang, and Pei-Xin Ye won the Bronze Medal at 2021 Taiwan Innotech Expo for their patented "Battery History Management System" (Patent TWM617006U).', ja: '蕭宇良・陳彰・張日星・葉佩欣が特許技術「バッテリー履歴管理システム」（TWM617006U）にて銅賞を受賞。' }, lang),
+            actions: [{ label: t(L.viewAchievements, lang), url: pageUrl(lang, 'achievements'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/seniors/tie-2021-team.webp" alt="2021 台灣創新技術博覽會 (TIE)" lang={lang} ratio="4/3" />
           <p class="photo-caption">🥉 <strong>{t({ zh: '2021 台灣創新技術博覽會 (TIE)', en: '2021 Taiwan Innotech Expo', ja: '2021 台湾イノテックエキスポ' }, lang)}</strong></p>
           <p class="activity-desc">{t({ zh: '蕭宇良、陳彰、張日星、葉佩欣以「電池履歷系統」榮獲銅牌獎', en: 'Bronze Medal for Battery History Management System', ja: '「バッテリー履歴管理システム」にて銅賞受賞' }, lang)}</p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
-        <div class="card photo-card">
+        <div
+          class="card photo-card"
+          tabindex="0"
+          role="button"
+          data-card-modal={JSON.stringify({
+            icon: '🎓',
+            badge: t(L.actTitle, lang),
+            title: t({ zh: '實驗室歷屆學長姐齊聚', en: 'Lab Alumni & Members', ja: '研究室の歴代メンバー' }, lang),
+            image: withBase('/images/seniors/grad-seniors.webp'),
+            desc: t({ zh: '傳承嚴謹電子量測精神與深厚同窗情誼，歷屆畢業碩士與專題生齊聚交流，延續產學實作與前瞻研發能量。', en: 'Carrying forward a tradition of precision electronic metrology and lifelong teamwork across cohorts from 2008 to 2026.', ja: '2008年から2026年へと受け継がれる精密電子計測の精神と先輩・後輩の固い絆。' }, lang),
+            actions: [{ label: t(L.viewMembers, lang), url: pageUrl(lang, 'members'), primary: true }],
+          } satisfies CardModalPayload)}
+        >
           <Img src="/images/seniors/grad-seniors.webp" alt="實驗室學長姐畢業與合影" lang={lang} ratio="4/3" />
           <p class="photo-caption">🎓 <strong>{t({ zh: '實驗室歷屆學長姐齊聚', en: 'Lab Alumni & Members', ja: '研究室の歴代メンバー' }, lang)}</strong></p>
           <p class="activity-desc">{t({ zh: '傳承嚴謹量測精神與深厚學長姐情誼，同窗共學、攜手研發', en: 'Tradition of precision measurement and strong teamwork across cohorts', ja: '精密計測の精神と強固な絆を受け継ぐ研究室の仲間たち' }, lang)}</p>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
       </div>
     </div>
@@ -137,7 +353,36 @@ const L = {
   <section class="section" id="pi">
     <div class="container">
       <h2 class="section-title">{t(L.pi, lang)}</h2>
-      <div class="pi card">
+      <div
+        class="pi card"
+        tabindex="0"
+        role="button"
+        data-card-modal={JSON.stringify({
+          title: `${t(pi.name, lang)}${lang === 'zh' ? ' (Wen-Ray Chen)' : ''}`,
+          subtitle: t(pi.title, lang),
+          badge: t(L.pi, lang),
+          image: withBase(pi.image),
+          desc: t(pi.education, lang),
+          sections: [
+            { title: t(L.exp, lang), tags: pi.expertise.map((e) => t(e, lang)) },
+            { title: t(L.experience, lang), list: pi.experience.map((item) => t(item, lang)) },
+            { title: t(L.courses, lang), tags: pi.courses.map((c) => t(c, lang)) },
+            { title: t(L.patents, lang), list: pi.patents.map((p) => t(p, lang)) },
+            {
+              title: t(L.contact, lang),
+              list: [
+                `${t(L.phoneLab, lang)}：${pi.phoneLab}｜${t(L.phoneOffice, lang)}：${pi.phoneOffice}｜${t(L.fax, lang)}：${pi.fax}`,
+                `Email：${pi.email}`,
+                t(pi.office, lang),
+              ],
+            },
+          ],
+          actions: [
+            { label: t(L.officialPage, lang), url: pi.profileUrl, primary: true, external: true },
+            { label: `✉️ ${pi.email}`, url: `mailto:${pi.email}`, contactEmail: true },
+          ],
+        } satisfies CardModalPayload)}
+      >
         <div class="pi-photo">
           <Img src={pi.image} alt={t(pi.name, lang)} lang={lang} ratio="3/4" label={t(pi.name, lang)} />
         </div>
@@ -171,6 +416,7 @@ const L = {
               <br />🌐 <a href={pi.profileUrl} target="_blank" rel="noopener noreferrer">{t(L.officialPage, lang)} ↗</a>
             </dd>
           </dl>
+          <span class="card-click-hint">{t(ui.viewDetails, lang)} →</span>
         </div>
       </div>
     </div>
@@ -178,6 +424,19 @@ const L = {
 </Base>
 
 <style>
+  .card-interactive {
+    display: flex;
+    flex-direction: column;
+  }
+  .card-interactive .card-click-hint {
+    margin-top: auto;
+    padding-top: 0.75rem;
+  }
+  .photo-card .card-click-hint {
+    margin-top: auto;
+    padding-top: 0.35rem;
+    text-align: center;
+  }
   .center {
     align-items: center;
   }
